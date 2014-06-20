@@ -49,7 +49,7 @@ func welcome(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("val:", strings.Join(v, ""))
 	}
 
-	db, err := sql.Open("sqlite3", "./case.s3db")
+	db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
 	rows, err := db.Query("select RecordID,Patient.Name,CreateDate from Record inner join Patient on Record.PatientID=Patient.PatientID limit 10")
 	checkErr(err)
 

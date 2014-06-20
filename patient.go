@@ -68,7 +68,7 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 			sqlstr = fmt.Sprintf("%s limit 10", sqlstr)
 		}
 
-		db, err := sql.Open("sqlite3", "./case.s3db")
+		db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
 		rows, err := db.Query(sqlstr)
 		checkErr(err)
 
