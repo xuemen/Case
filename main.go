@@ -38,6 +38,10 @@ type CaseBrief struct {
 }
 
 func welcome(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("temp.html")
+	t.Execute(w, nil)
+	return
+
 	r.ParseForm() //解析参数，默认是不会解析的
 	fmt.Println("method", r.Method)
 	fmt.Println(r.Form) //这些信息是输出到服务器端的打印信息
@@ -71,8 +75,14 @@ func welcome(w http.ResponseWriter, r *http.Request) {
 
 	//log.Print(c)
 
-	t, _ := template.ParseFiles("welcome.gtpl")
-	t.Execute(w, c)
+	//t, _ := template.ParseFiles("welcome.gtpl")
+	//t.Execute(w, c)
+}
+
+func serveFile(pattern string, filename string) {
+	http.HandleFunc(pattern, func(w http.ResponseWriter, req *http.Request) {
+		http.ServeFile(w, req, filename)
+	})
 }
 
 func main() {
@@ -87,6 +97,10 @@ func main() {
 	http.HandleFunc("/case/new", CaseNew)
 	http.HandleFunc("/case/list", CaseList)
 	http.HandleFunc("/case/detail", CaseDetail)
+	http.HandleFunc("/static/", func(w http.ResponseWriter, req *http.Request) {
+		http.ServeFile(w, req, req.URL.Path[1:])
+	})
+	serveFile("/favicon.ico", "./favicon.ico")
 
 	err := http.ListenAndServe(":2273", nil) //设置监听的端口
 	if err != nil {
