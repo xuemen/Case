@@ -63,7 +63,7 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 			log.Print("wherestr:\t", wherestr)
 		}
 
-		if r.Form["sex"][0] != "" {
+		if r.Form["sex"][0] != "All" {
 			if where {
 				wherestr = fmt.Sprintf("%s and Patient.Sex=\"%s\"", wherestr, r.Form["sex"][0])
 			} else {
