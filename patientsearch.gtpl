@@ -12,19 +12,22 @@
 <form id="searchpatient" action="/patient/search" method="post">
 	编号：<input type="text" name="id"><br />
     姓名：<input type="text" name="name"><br />
-	性别：<input type="radio" name="sex" value="Male" /> 男
+	性别：<input type="radio" name="sex" checked="checked" value="Male" /> 男
 		  <input type="radio" name="sex" value="Female" /> 女	<br />
 	生日：<input type="date" name="BOD" />（格式：yyyy-mm-dd）<br />
 	<br /><br />
 
-    <input type="submit" name="s" value="查找"></input><br />
-	输入单项即可查询<br /><br />
-	<input type="submit" name="s" value="24小时内就诊"></input><br />
-	<input type="submit" name="s" value="7天内就诊"></input><br />
+    <input type="submit" name="b" value="查找"></input><br />
+	输入单项即可查询<br /><br /><br />
+	<input type="submit" name="b" value="24小时内就诊"></input><br />
+	<input type="submit" name="b" value="7天内就诊"></input><br />
 	<br /><br />
-	<a href="/patient/search?s=24h"><button>24小时内就诊</button></a><br />
-	<a href="/patient/search?s=7d"><button>7天内就诊</button></a><br />
+	<!--
+	<a href="/patient/search?s=24h"><button type="button">24小时内就诊</button></a><br />
+	<a href="/patient/search?s=7d""><button type="button>7天内就诊</button></a><br />
+	-->
 </form>
+
 </td>
 <td>
 	<table>

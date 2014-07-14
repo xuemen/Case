@@ -35,9 +35,13 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 		t.Execute(w, nil)
 	} else if r.Method == "POST" {
 		f := r.Form
+		log.Print("r.Form:\t", r.Form)
+		log.Print("r.Form[\"b\"]:\t", r.Form["b"])
+		log.Print("r.Form[\"b\"][0]:\t", r.Form["b"][0])
+
 		where := false
 		wherestr := ""
-		sqlstr := "select Patient.*,datetime(CreateTime),Diag from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID limit 10"
+		sqlstr := "select Patient.*,datetime(CreateTime),ifnull(Diag,'未填写诊断') from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID limit 10"
 		if r.Form["id"][0] != "" {
 			if where {
 				wherestr = fmt.Sprintf("%s and Patient.PatientID=%s", wherestr, r.Form["id"][0])
@@ -80,8 +84,8 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 			where = true
 			log.Print("wherestr:\t", wherestr)
 		}
-		log.Print("f.Get(s):\t", f.Get("s"))
-		if f.Get("s") == "24小时内就诊" {
+		log.Print("f.Get(b):\t", f.Get("b"))
+		if f.Get("b") == "24小时内就诊" {
 			if where {
 				wherestr = fmt.Sprintf("%s and (strftime('%%s','now') - strftime('%%s',createtime))<86400", wherestr)
 			} else {
@@ -92,7 +96,7 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 			log.Print("wherestr:\t", wherestr)
 		}
 
-		if f.Get("s") == "7天内就诊" {
+		if f.Get("b") == "7天内就诊" {
 			if where {
 				wherestr = fmt.Sprintf("%s and (strftime('%%s','now') - strftime('%%s',createtime))<604800", wherestr)
 			} else {
