@@ -6,67 +6,110 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type Patient struct {
-	PatientID int
-	Name      string
-	Sex       string
-	BOD       string
+	PatientID  int
+	Name       string
+	Sex        string
+	BOD        string
+	Address    string
+	CreateTime string
+	Diag       string
 }
 
 func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm() //解析参数，默认是不会解析的
+	fmt.Println("method", r.Method)
+	fmt.Println("path", r.URL.Path)
+
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
 
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("patientsearch.gtpl")
 		t.Execute(w, nil)
 	} else if r.Method == "POST" {
+		f := r.Form
 		where := false
 		wherestr := ""
-		sqlstr := "select PatientID,Name,Sex,BOD from Patient"
+		sqlstr := "select Patient.*,datetime(CreateTime),Diag from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID limit 10"
 		if r.Form["id"][0] != "" {
 			if where {
-				wherestr = fmt.Sprintf("%s and ID=%s", wherestr, r.Form["id"][0])
+				wherestr = fmt.Sprintf("%s and Patient.PatientID=%s", wherestr, r.Form["id"][0])
 			} else {
-				wherestr = fmt.Sprintf("%s ID=%s", wherestr, r.Form["id"][0])
+				wherestr = fmt.Sprintf("%s Patient.PatientID=%s", wherestr, r.Form["id"][0])
 			}
 			where = true
+			log.Print("wherestr:\t", wherestr)
 		}
+
 		if r.Form["name"][0] != "" {
 			if where {
-				wherestr = fmt.Sprintf("%s and Name=\"%s\"", wherestr, r.Form["name"][0])
+				wherestr = fmt.Sprintf("%s and Patient.Name=\"%s\"", wherestr, r.Form["name"][0])
 			} else {
-				wherestr = fmt.Sprintf("%s Name=\"%s\"", wherestr, r.Form["name"][0])
+				wherestr = fmt.Sprintf("%s Patient.Name=\"%s\"", wherestr, r.Form["name"][0])
 			}
 
 			where = true
+			log.Print("wherestr:\t", wherestr)
 		}
+
 		if r.Form["sex"][0] != "" {
 			if where {
-				wherestr = fmt.Sprintf("%s and Sex=\"%s\"", wherestr, r.Form["sex"][0])
+				wherestr = fmt.Sprintf("%s and Patient.Sex=\"%s\"", wherestr, r.Form["sex"][0])
 			} else {
-				wherestr = fmt.Sprintf("%s Sex=\"%s\"", wherestr, r.Form["sex"][0])
+				wherestr = fmt.Sprintf("%s Patient.Sex=\"%s\"", wherestr, r.Form["sex"][0])
 			}
 
 			where = true
+			log.Print("wherestr:\t", wherestr)
 		}
+
 		if r.Form["BOD"][0] != "" {
 			if where {
-				wherestr = fmt.Sprintf("%s and BOD=\"%s\"", wherestr, r.Form["BOD"][0])
+				wherestr = fmt.Sprintf("%s and Patient.BOD=\"%s\"", wherestr, r.Form["BOD"][0])
 			} else {
-				wherestr = fmt.Sprintf("%s BOD=\"%s\"", wherestr, r.Form["BOD"][0])
+				wherestr = fmt.Sprintf("%s Patient.BOD=\"%s\"", wherestr, r.Form["BOD"][0])
 			}
 
 			where = true
+			log.Print("wherestr:\t", wherestr)
+		}
+		log.Print("f.Get(s):\t", f.Get("s"))
+		if f.Get("s") == "24小时内就诊" {
+			if where {
+				wherestr = fmt.Sprintf("%s and (strftime('%%s','now') - strftime('%%s',createtime))<86400", wherestr)
+			} else {
+				wherestr = fmt.Sprintf("%s (strftime('%%s','now') - strftime('%%s',createtime))<86400", wherestr)
+			}
+
+			where = true
+			log.Print("wherestr:\t", wherestr)
+		}
+
+		if f.Get("s") == "7天内就诊" {
+			if where {
+				wherestr = fmt.Sprintf("%s and (strftime('%%s','now') - strftime('%%s',createtime))<604800", wherestr)
+			} else {
+				wherestr = fmt.Sprintf("%s (strftime('%%s','now') - strftime('%%s',createtime))<604800", wherestr)
+			}
+
+			where = true
+			log.Print("wherestr:\t", wherestr)
 		}
 
 		if where {
-			sqlstr = fmt.Sprintf("%s where %s limit 10", sqlstr, wherestr)
-		} else {
-			sqlstr = fmt.Sprintf("%s limit 10", sqlstr)
+			wherestr = fmt.Sprintf("where %s", wherestr)
 		}
+
+		log.Print("sqlstr:\t", sqlstr)
+		sqlstr = fmt.Sprintf(sqlstr, wherestr)
+		log.Print("sqlstr:\t", sqlstr)
 
 		db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
 		rows, err := db.Query(sqlstr)
@@ -77,17 +120,27 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 		var parray [10]Patient
 		c := parray[0:0]
 
+		HasResult := false
+
 		for rows.Next() {
 			var p Patient
 
-			err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.BOD)
+			err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.BOD, &p.Address, &p.CreateTime, &p.Diag)
 			checkErr(err)
 
 			c = append(c, p)
+			HasResult = true
+			log.Print("c:\t", c)
+			log.Print("p:\t", p)
 		}
 
-		t, _ := template.ParseFiles("patientlist.gtpl")
-		t.Execute(w, c)
+		t, _ := template.ParseFiles("patientsearch.gtpl")
+		if HasResult {
+			t.Execute(w, c)
+		} else {
+			t.Execute(w, nil)
+		}
+
 	}
 
 }

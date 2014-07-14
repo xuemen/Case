@@ -13,7 +13,9 @@
 <br />
 病案：<br />
 {{range .}}
-<a href="case/detial?CaseID={{.CaseID}}">{{.PatientName}} : [{{.Date}}]</a> <br />
+<a href="case/detial?CaseID={{.CaseID}}">{{.PatientName}} : [{{.CreateTime}}]</a> <br />
 {{end}}
+<br />
+
 </body>
 </html>

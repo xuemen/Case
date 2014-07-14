@@ -34,27 +34,25 @@ func openbrowser(url string) {
 type CaseBrief struct {
 	CaseID      int
 	PatientName string
-	Date        string
+	CreateTime  string
 }
 
 func welcome(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("temp.html")
-	t.Execute(w, nil)
-	return
+	//t, _ := template.ParseFiles("temp.html")
+	//t.Execute(w, nil)
+	//return
 
 	r.ParseForm() //解析参数，默认是不会解析的
 	fmt.Println("method", r.Method)
-	fmt.Println(r.Form) //这些信息是输出到服务器端的打印信息
 	fmt.Println("path", r.URL.Path)
-	fmt.Println("scheme", r.URL.Scheme)
-	fmt.Println(r.Form["url_long"])
+
 	for k, v := range r.Form {
 		fmt.Println("key:", k)
 		fmt.Println("val:", strings.Join(v, ""))
 	}
 
 	db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
-	rows, err := db.Query("select RecordID,Patient.Name,CreateDate from Record inner join Patient on Record.PatientID=Patient.PatientID limit 10")
+	rows, err := db.Query("select RecordID,Patient.Name,datetime(CreateTime) from Record inner join Patient on Record.PatientID=Patient.PatientID limit 10")
 	checkErr(err)
 
 	var cbarray [10]CaseBrief
@@ -63,7 +61,7 @@ func welcome(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var cb CaseBrief
 
-		err = rows.Scan(&cb.CaseID, &cb.PatientName, &cb.Date)
+		err = rows.Scan(&cb.CaseID, &cb.PatientName, &cb.CreateTime)
 		checkErr(err)
 
 		c = append(c, cb)
@@ -75,8 +73,8 @@ func welcome(w http.ResponseWriter, r *http.Request) {
 
 	//log.Print(c)
 
-	//t, _ := template.ParseFiles("welcome.gtpl")
-	//t.Execute(w, c)
+	t, _ := template.ParseFiles("welcome.gtpl")
+	t.Execute(w, c)
 }
 
 func serveFile(pattern string, filename string) {
@@ -86,7 +84,7 @@ func serveFile(pattern string, filename string) {
 }
 
 func main() {
-	openbrowser("http://localhost:2273")
+	openbrowser("http://127.0.0.1:2273")
 
 	//设置访问的路由
 	http.HandleFunc("/", welcome)
