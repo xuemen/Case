@@ -22,7 +22,7 @@
 	</div>
 	
     <div class="pure-u-2-3">
-		病案：<br>
+		病历：<br>
 		<p>
 		{{range .}}
 		<a href="case/detial?CaseID={{.CaseID}}">{{.PatientName}} : [{{.CreateTime}}]</a> <br>
