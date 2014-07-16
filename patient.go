@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type Patient struct {
+type PatientSearchResult struct {
 	PatientID  int
 	Name       string
 	Sex        string
@@ -116,13 +116,13 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 
 		log.Print(rows)
 
-		var parray [10]Patient
+		var parray [100]PatientSearchResult
 		c := parray[0:0]
 
 		HasResult := false
 
 		for rows.Next() {
-			var p Patient
+			var p PatientSearchResult
 
 			err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.BOD, &p.Address, &p.CreateTime, &p.Diag)
 			checkErr(err)
@@ -180,7 +180,7 @@ func PatientNew(w http.ResponseWriter, r *http.Request) {
 		checkErr(err)
 		log.Print("result:\t", result)
 
-		fmt.Fprint(w, "<script>window.open(\"/case/new\")</script>")
+		fmt.Fprintf(w, "<script>window.location=\"/case/new?pid=%s\"</script>", r.Form["id"][0])
 	}
 
 }

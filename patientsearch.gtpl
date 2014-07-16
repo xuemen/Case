@@ -49,8 +49,8 @@
 					<div class="pure-u-1-3">
 		                <label for="sex">性别</label>
 						<input type="radio" name="sex" checked="checked" value="All" /> 不限
-						<input type="radio" name="sex" value="Male" /> 男
-						<input type="radio" name="sex" value="Female" /> 女	<br>
+						<input type="radio" name="sex" value="男" /> 男
+						<input type="radio" name="sex" value="女" /> 女	<br>
 	            	</div>
 
 					<div class="pure-u-1-3">
@@ -74,7 +74,7 @@
 			<tbody>
 			{{range .}}
 				<tr>
-					<td>{{.PatientID}}</td><td>{{.Name}}</td><td>{{.Sex}}</td><td>{{.BOD}}</td><td>{{.Address}}</td><td>{{.CreateTime}}</td><td>{{.Diag}}</td><td><a href="patient/detail?id={{.PatientID}}">查看</a></td>
+					<td>{{.PatientID}}</td><td>{{.Name}}</td><td>{{.Sex}}</td><td>{{.BOD}}</td><td>{{.Address}}</td><td>{{.CreateTime}}</td><td>{{.Diag}}</td><td><a href="/patient/detail?id={{.PatientID}}">查看</a><a href="/case/new?pid={{.PatientID}}">新建</a></td>
 				</tr>
 			{{end}}
 			</tbody>
