@@ -36,8 +36,8 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == "POST" {
 		where := false
 		wherestr := ""
-		sqlstr := "select Patient.*,ifnull(datetime(CreateTime),'未就诊'),ifnull(Diag,'未填写诊断') from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID limit 10"
-		if r.Form["id"][0] != "" {
+		sqlstr := "select Patient.*,ifnull(datetime(CreateTime),'未就诊'),ifnull(Diag,'未填写诊断') from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID"
+		if len(r.Form["id"]) > 0 {
 			if where {
 				wherestr = fmt.Sprintf("%s and Patient.PatientID=%s", wherestr, r.Form["id"][0])
 			} else {
@@ -47,7 +47,7 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 			log.Print("wherestr:\t", wherestr)
 		}
 
-		if r.Form["name"][0] != "" {
+		if len(r.Form["name"]) > 0 {
 			if where {
 				wherestr = fmt.Sprintf("%s and Patient.Name=\"%s\"", wherestr, r.Form["name"][0])
 			} else {
@@ -69,7 +69,7 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 			log.Print("wherestr:\t", wherestr)
 		}
 
-		if r.Form["BOD"][0] != "" {
+		if len(r.Form["BOD"]) > 0 {
 			if where {
 				wherestr = fmt.Sprintf("%s and Patient.BOD=\"%s\"", wherestr, r.Form["BOD"][0])
 			} else {
@@ -148,17 +148,39 @@ func PatientNew(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm() //解析参数，默认是不会解析的
 	fmt.Println("method", r.Method)
-	fmt.Println("Action:", r.Form["action"])
-	fmt.Println("ID:", r.Form["id"])
-	fmt.Println("Name:", r.Form["name"])
-	fmt.Println("Sex:", r.Form["sex"])
-	fmt.Println("BOD:", r.Form["BOD"])
+	fmt.Println("path", r.URL.Path)
+
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
 
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("patientnew.gtpl")
 		t.Execute(w, nil)
 	} else if r.Method == "POST" {
+		if (len(r.Form["id"][0]) == 0) || (len(r.Form["name"][0]) == 0) {
+			fmt.Fprint(w, "<script>alert(\"必须填写编号和姓名\");</script>")
+			t, _ := template.ParseFiles("patientnew.gtpl")
+			t.Execute(w, nil)
+		}
+		sqlstr := fmt.Sprintf("insert into patient (patientid,name,sex,bod,address,PMH,FMH,Allergies,FVT) values (\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",datetime(\"now\",\"localtime\"))",
+			r.Form["id"][0],
+			r.Form["name"][0],
+			r.Form["sex"][0],
+			r.Form["BOD"][0],
+			r.Form["Address"][0],
+			r.Form["PMH"][0],
+			r.Form["FMH"][0],
+			r.Form["Allergies"][0])
 
+		log.Print("sqlstr:\t", sqlstr)
+		db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
+		result, err := db.Exec(sqlstr)
+		checkErr(err)
+		log.Print("result:\t", result)
+
+		fmt.Fprint(w, "<script>window.open(\"/case/new\")</script>")
 	}
 
 }
@@ -172,6 +194,11 @@ func PatientUpdate(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Name:", r.Form["name"])
 	fmt.Println("Sex:", r.Form["sex"])
 	fmt.Println("BOD:", r.Form["BOD"])
+
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
 
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("patientupdate.gtpl")

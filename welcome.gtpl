@@ -6,14 +6,14 @@
   <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
 </head>
 <body>
-<div class="header">
+<div class="header" align="center">
 	<h1>欢迎</h1>
 	<h2>病案管理系统（单机版）</h2>
 	<hr>
 </div>
 <div class="pure-g">
 
-    <div class="pure-u-1-3"> 
+    <div class="pure-u-1-3"  align="center"> 
 		病人：<br>
 		<p>
 		<a href="patient/search">查找</a>
@@ -21,7 +21,7 @@
 		</p>
 	</div>
 	
-    <div class="pure-u-2-3">
+    <div class="pure-u-2-3"  align="center">
 		病历：<br>
 		<p>
 		{{range .}}

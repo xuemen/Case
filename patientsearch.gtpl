@@ -12,13 +12,13 @@
 	</script>
 </head>
 <body>
-<div class="header">
+<div class="header" align="center">
 	<h1>查找病人</h1>
 	<hr>
 </div>
 
 <div class="pure-g">
-	<div class="pure-u-1"> 
+	<div class="pure-u-1"  align="center"> 
 		<form class="pure-form pure-form-stacked" id="searchpatient" action="/patient/search#result" method="post">
 			<fieldset>
 				<legend>输入单项即可查询</legend>

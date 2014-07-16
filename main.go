@@ -38,10 +38,6 @@ type CaseBrief struct {
 }
 
 func welcome(w http.ResponseWriter, r *http.Request) {
-	//t, _ := template.ParseFiles("temp.html")
-	//t.Execute(w, nil)
-	//return
-
 	r.ParseForm() //解析参数，默认是不会解析的
 	fmt.Println("method", r.Method)
 	fmt.Println("path", r.URL.Path)
