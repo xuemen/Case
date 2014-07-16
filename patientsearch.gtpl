@@ -64,7 +64,7 @@
 	<hr>
 	<a name="result"></a>
 	<div class="pure-u-1">
-		<table class="pure-table pure-table-bordered" align="center">
+		<table class="pure-table pure-table-bordered" align="center" width="100%">
 			<caption>查找结果</caption>
 			<thead>
 				<tr>
