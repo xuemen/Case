@@ -20,7 +20,7 @@
   top: 0;
   left: -200px;
   bottom: 0;
-  background: #404040;
+  background: white;
   -webkit-transition: left .1s .1s linear;
      -moz-transition: left .1s .1s linear;
        -o-transition: left .1s .1s linear;
