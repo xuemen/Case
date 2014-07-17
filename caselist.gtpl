@@ -32,7 +32,7 @@
 					<tbody>
 					{{range .Cases}}
 						<tr>
-							<td>{{.RecordID}}</td><td>{{.CreateTime}}</td><td>{{.MainComplaint}}</td><td>{{.ExamReport}}</td><td>{{.Diag}}</td><td>{{.DRR}}</td><td>{{.Presciption}}</td><td><a href="/case/detail?rid={{.RecordID}}">详情</a> | <a href="/case/detail?pid={{.PatientID}}&rid={{.RecordID}}">拷贝</a></td>
+							<td>{{.RecordID}}</td><td>{{.CreateTime}}</td><td>{{.MainComplaint}}</td><td>{{.ExamReport}}</td><td>{{.Diag}}</td><td>{{.DRR}}</td><td>{{.Presciption}}</td><td><a href="/case/detail?rid={{.RecordID}}">详情</a> | <a href="/case/detail?rid={{.RecordID}}">拷贝</a></td>
 						</tr>
 					{{end}}
 					</tbody>

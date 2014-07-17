@@ -84,7 +84,6 @@ func CaseNew(w http.ResponseWriter, r *http.Request) {
 
 type Case struct {
 	RecordID      int
-	PatientID     int
 	MainComplaint string
 	ExamReport    string
 	Diag          string
@@ -129,7 +128,7 @@ func CaseList(w http.ResponseWriter, r *http.Request) {
 			}
 			log.Print("cld:\t", cld)
 
-			sqlstr = fmt.Sprintf("Select RecordID,PatientID,ifnull(MainComplaint,\"未填写主诉\"),ifnull(ExamReport,\"无检验报告\"),ifnull(Diag,\"未填写诊断\"),ifnull(DRR,\"未填写医嘱\"),ifnull(Presciption,\"未填写处方\"),ifnull(datetime(CreateTime),\"未提交\") from Record where PatientID = %s limit 100", r.Form["pid"][0])
+			sqlstr = fmt.Sprintf("Select RecordID,ifnull(MainComplaint,\"未填写主诉\"),ifnull(ExamReport,\"无检验报告\"),ifnull(Diag,\"未填写诊断\"),ifnull(DRR,\"未填写医嘱\"),ifnull(Presciption,\"未填写处方\"),ifnull(datetime(CreateTime),\"未提交\") from Record where PatientID = %s limit 100", r.Form["pid"][0])
 			log.Print("sqlstr:\t", sqlstr)
 
 			rows, err = db.Query(sqlstr)
@@ -142,7 +141,7 @@ func CaseList(w http.ResponseWriter, r *http.Request) {
 			for rows.Next() {
 				var c Case
 
-				err = rows.Scan(&c.RecordID, &c.PatientID, &c.MainComplaint, &c.ExamReport, &c.Diag, &c.DRR, &c.Presciption, &c.CreateTime)
+				err = rows.Scan(&c.RecordID, &c.MainComplaint, &c.ExamReport, &c.Diag, &c.DRR, &c.Presciption, &c.CreateTime)
 				checkErr(err)
 
 				cld.Cases = append(cld.Cases, c)
@@ -161,19 +160,73 @@ func CaseList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func CaseDetail(w http.ResponseWriter, r *http.Request) {
+type CaseDetailData struct {
+	RecordID      int
+	PatientID     int
+	MainComplaint string
+	ExamReport    string
+	Diag          string
+	DRR           string
+	Presciption   string
+	Notes         string
+	CreateTime    string
+	Name          string
+	Sex           string
+	BOD           string
+	Address       string
+	PMH           string
+	FMH           string
+	Allergies     string
+}
 
+func CaseDetail(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() //解析参数，默认是不会解析的
 	fmt.Println("method", r.Method)
-	fmt.Println("Action:", r.Form["action"])
-	fmt.Println("ID:", r.Form["id"])
-	fmt.Println("Name:", r.Form["name"])
-	fmt.Println("Sex:", r.Form["sex"])
-	fmt.Println("BOD:", r.Form["BOD"])
+	fmt.Println("path", r.URL.Path)
+
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
 
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("casedetial.gtpl")
-		t.Execute(w, nil)
+		if len(r.Form["rid"]) > 0 {
+			sqlstr := fmt.Sprintf("Select RecordID,PatientID,ifnull(MainComplaint,\"未填写主诉\"),ifnull(ExamReport,\"无检验报告\"),ifnull(Diag,\"未填写诊断\"),ifnull(DRR,\"未填写医嘱\"),ifnull(Presciption,\"未填写处方\"),ifnull(Notes,\"未填写备注\"),ifnull(datetime(CreateTime),\"未提交\") from Record where RecordID = %s", r.Form["rid"][0])
+			log.Print("sqlstr:\t", sqlstr)
+
+			db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
+			rows, err := db.Query(sqlstr)
+			checkErr(err)
+
+			//log.Print(rows)
+			var c CaseDetailData
+			for rows.Next() {
+				err = rows.Scan(&c.RecordID, &c.PatientID, &c.MainComplaint, &c.ExamReport, &c.Diag, &c.DRR, &c.Presciption, &c.Notes, &c.CreateTime)
+				checkErr(err)
+			}
+			log.Print("c:\t", c)
+
+			sqlstr = fmt.Sprintf("select PatientID,Name,Sex,ifnull(date(BOD),\"未填写生日\"),ifnull(Address,\"未填写地址\"),ifnull(PMH,\"未填写既往病史\"),ifnull(FMH,\"未填写家族病史\"),ifnull(Allergies,\"未填写过敏史\") from Patient where PatientID = %d", c.PatientID)
+			log.Print("sqlstr:\t", sqlstr)
+
+			rows, err = db.Query(sqlstr)
+			checkErr(err)
+			log.Print("rows:\t", rows)
+
+			for rows.Next() {
+				err = rows.Scan(&c.PatientID, &c.Name, &c.Sex, &c.BOD, &c.Address, &c.PMH, &c.FMH, &c.Allergies)
+				checkErr(err)
+			}
+			log.Print("c:\t", c)
+			t, err := template.ParseFiles("casedetail.gtpl")
+			checkErr(err)
+			err = t.Execute(w, c)
+			checkErr(err)
+			log.Print("err:\t", err)
+		} else {
+			t, _ := template.ParseFiles("casedetail.gtpl")
+			t.Execute(w, nil)
+		}
 	} else if r.Method == "POST" {
 
 	}

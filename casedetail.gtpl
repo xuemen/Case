@@ -5,19 +5,42 @@
 		<link rel="stylesheet" type="text/css" href="/static/css/sidebar.css" />
 		<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
 		<script type="text/javascript">
- 			function formReset(){
- 				document.getElementById("newpatient").reset()
-			}
-		</script>
+			 function flip()
+			 {
+				MainComplaint = document.getElementById('MainComplaint');
+				ExamReport = document.getElementById('ExamReport');
+				Diag = document.getElementById('Diag');
+				DRR = document.getElementById('DRR');
+				Presciption = document.getElementById('Presciption');
+				Notes = document.getElementById('Notes');
+				
+				 if (MainComplaint.getAttribute("disabled") == "disabled") {
+					MainComplaint.removeAttribute("disabled");
+					ExamReport.removeAttribute("disabled");
+					Diag.removeAttribute("disabled");
+					DRR.removeAttribute("disabled");
+					Presciption.removeAttribute("disabled");
+					Notes.removeAttribute("disabled");
+            	}
+            	else {
+                	MainComplaint.setAttribute("disabled","disabled");
+					ExamReport.setAttribute("disabled","disabled");
+					Diag.setAttribute("disabled","disabled");
+					DRR.setAttribute("disabled","disabled");
+					Presciption.setAttribute("disabled","disabled");
+					Notes.setAttribute("disabled","disabled");
+            	}
+			 }
+		</script>	
 	</head>
 	<body>
 		<!--content begin-->
 		<div class="header"  align="center">
-			<h1>填写病历</h1>
+			<h1>病历详情</h1>
 			<hr>
 		</div>
 
-		<form class="pure-form" id="newcase" action="/case/new" method="post">
+		<form class="pure-form" id="casedetial" action="/case/new" method="post">
 			<div class="pure-g">
 				<div class="pure-u-1-3">
 					编号：{{.PatientID}}<br>
@@ -30,44 +53,37 @@
 					过敏史：{{.Allergies}}<br><hr>
 					<fieldset>
 						<br>
-						<input type="hidden" name="pid" value="{{.PatientID}}"></input>
+						<input type="hidden" name="rid" value="{{.RecordID}}"></input>
 						<input type="submit" class="pure-button pure-button-primary pure-input-1-3" name="b" value="提交"></input>
-						<input type="button" class="pure-button pure-button-primary pure-input-1-3" onclick="formReset()" value="重置"></input>
+						<input type="button" id="edit" class="pure-button pure-button-primary pure-input-1-3" onclick="flip()" value="编辑"></input>
 					</fieldset>
 				</div>
 				<div class="pure-u-2-3" align="center">
-					就诊日期：
-					<script language=JavaScript> 
-					today=new Date(); 
-					document.write(
-						today.getYear(),"年", 
-						today.getMonth()+1,"月", 
-						today.getDate(),"日"); 
-					</script><br>
+					就诊日期：{{.CreateTime}}<br>
 					<fieldset>
 						<div class="pure-control-group">
 							<label for="<MainComplaint">主&nbsp;&nbsp;&nbsp;&nbsp;诉</label>
-							<textarea name="MainComplaint" class="pure-input-2-3" rows="3" placeholder="主诉" ></textarea>
+							<textarea id="MainComplaint" name="MainComplaint" class="pure-input-2-3" rows="3" placeholder="主诉">{{.MainComplaint}}</textarea>
 						</div>
 						<div class="pure-control-group">
 							<label for="ExamReport">检查报告</label>
-							<textarea name="ExamReport" class="pure-input-2-3" rows="3" placeholder="检查报告" ></textarea>
+							<textarea id="ExamReport" name="ExamReport" class="pure-input-2-3" rows="3" placeholder="检查报告" >{{.ExamReport}}</textarea>
 						</div>
 						<div class="pure-control-group">
 							<label for="Diag">诊&nbsp;&nbsp;&nbsp;&nbsp;断</label>
-							<input type="text" name="Diag" class="pure-input-2-3" placeholder="诊断"></input>
+							<input type="text" id="Diag" name="Diag" class="pure-input-2-3" placeholder="诊断" value="{{.Diag}}"></input>
 						</div>
 						<div class="pure-control-group">
 							<label for="DRR">医&nbsp;&nbsp;&nbsp;&nbsp;嘱</label>
-							<textarea name="DRR" class="pure-input-2-3" rows="3" placeholder="医嘱" ></textarea>
+							<textarea id="DRR" name="DRR" class="pure-input-2-3" rows="3" placeholder="医嘱" >{{.DRR}}</textarea>
 						</div>
 						<div class="pure-control-group">
 							<label for="Presciption">处&nbsp;&nbsp;&nbsp;&nbsp;方</label>
-							<textarea name="Presciption" class="pure-input-2-3" rows="3" placeholder="处方" ></textarea>
+							<textarea id="Presciption" name="Presciption" class="pure-input-2-3" rows="3" placeholder="处方" >{{.Presciption}}</textarea>
 						</div>
 						<div class="pure-control-group">
 							<label for="Notes">备&nbsp;&nbsp;&nbsp;&nbsp;注</label>
-							<textarea name="Notes" class="pure-input-2-3" rows="3" placeholder="备注" ></textarea>
+							<textarea id="Notes" name="Notes" class="pure-input-2-3" rows="3" placeholder="备注" >{{.Notes}}</textarea>
 						</div>
 					</fieldset>
 				
