@@ -36,7 +36,7 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == "POST" {
 		where := false
 		wherestr := ""
-		sqlstr := "select Patient.PatientID,Patient.Name,Patient.Sex,Patient.BOD,Patient.Address,ifnull(datetime(CreateTime),'未就诊'),ifnull(Diag,'未填写诊断') from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID"
+		sqlstr := "select Patient.PatientID,Patient.Name,Patient.Sex,Patient.BOD,Patient.Address,ifnull(datetime(CreateTime),'未就诊'),ifnull(Diag,'未填写诊断') from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID limit 100"
 		if len(r.Form["id"][0]) > 0 {
 			if where {
 				wherestr = fmt.Sprintf("%s and Patient.PatientID=%s", wherestr, r.Form["id"][0])

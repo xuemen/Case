@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8"> 
 		<link rel="stylesheet" type="text/css" href="/static/css/sidebar.css" />
-		<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
 	</head>
 	<body>
 		<!--content begin-->
@@ -67,7 +67,7 @@
 					<tbody>
 					{{range .}}
 						<tr>
-							<td>{{.PatientID}}</td><td>{{.Name}}</td><td>{{.Sex}}</td><td>{{.BOD}}</td><td>{{.Address}}</td><td>{{.CreateTime}}</td><td>{{.Diag}}</td><td><a href="/patient/detail?id={{.PatientID}}">查看</a> | <a href="/case/new?pid={{.PatientID}}">新建</a></td>
+							<td>{{.PatientID}}</td><td>{{.Name}}</td><td>{{.Sex}}</td><td>{{.BOD}}</td><td>{{.Address}}</td><td>{{.CreateTime}}</td><td>{{.Diag}}</td><td><a href="/case/list?pid={{.PatientID}}">查看</a> | <a href="/case/new?pid={{.PatientID}}">新建</a></td>
 						</tr>
 					{{end}}
 					</tbody>
@@ -83,21 +83,12 @@
 			</div>
 			<div class="sidebar">
 				<ul>
-					<li>HOME</li>
-					<li>
-					  <span>Home</span>
-					</li>
+					<li onclick="window.location.href='/welcome'">Home</li>
 					<li class="devider"></li>
-					<li>
-					  <span>Profile</span>
-					</li>
-					<li>
-					  <span>Circles</span>
-					</li>
-					<li>
-					  <span>Photos</span>
-					</li>
+					<li onclick="window.location.href='/patient/search'">查找病人</li>
+					<li onclick="window.location.href='/patient/new'">新增病人</li>
 					<li class="devider"></li>
+					<li onclick="window.location.href='/case/search'">查找病历</li>
 				</ul>
 			</div>
 		</div>

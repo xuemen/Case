@@ -82,19 +82,79 @@ func CaseNew(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func CaseList(w http.ResponseWriter, r *http.Request) {
+type Case struct {
+	RecordID      int
+	PatientID     int
+	MainComplaint string
+	ExamReport    string
+	Diag          string
+	DRR           string
+	Presciption   string
+	CreateTime    string
+}
 
+type CaseListData struct {
+	PatientID int
+	Name      string
+	Sex       string
+	BOD       string
+	Address   string
+	Cases     []Case
+}
+
+func CaseList(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() //解析参数，默认是不会解析的
 	fmt.Println("method", r.Method)
-	fmt.Println("Action:", r.Form["action"])
-	fmt.Println("ID:", r.Form["id"])
-	fmt.Println("Name:", r.Form["name"])
-	fmt.Println("Sex:", r.Form["sex"])
-	fmt.Println("BOD:", r.Form["BOD"])
+	fmt.Println("path", r.URL.Path)
+
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
 
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("caselist.gtpl")
-		t.Execute(w, nil)
+		if len(r.Form["pid"]) > 0 {
+			sqlstr := fmt.Sprintf("select PatientID,Name,Sex,ifnull(date(BOD),\"未填写生日\"),ifnull(Address,\"未填写地址\") from Patient where PatientID = %s", r.Form["pid"][0])
+			log.Print("sqlstr:\t", sqlstr)
+
+			db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
+			rows, err := db.Query(sqlstr)
+			checkErr(err)
+
+			//log.Print(rows)
+			var cld CaseListData
+			for rows.Next() {
+				err = rows.Scan(&cld.PatientID, &cld.Name, &cld.Sex, &cld.BOD, &cld.Address)
+				checkErr(err)
+			}
+			log.Print("cld:\t", cld)
+
+			sqlstr = fmt.Sprintf("Select RecordID,PatientID,ifnull(MainComplaint,\"未填写主诉\"),ifnull(ExamReport,\"无检验报告\"),ifnull(Diag,\"未填写诊断\"),ifnull(DRR,\"未填写医嘱\"),ifnull(Presciption,\"未填写处方\"),ifnull(datetime(CreateTime),\"未提交\") from Record where PatientID = %s limit 100", r.Form["pid"][0])
+			log.Print("sqlstr:\t", sqlstr)
+
+			rows, err = db.Query(sqlstr)
+			checkErr(err)
+
+			//log.Print(rows)
+			var CArray [100]Case
+			cld.Cases = CArray[0:0]
+
+			for rows.Next() {
+				var c Case
+
+				err = rows.Scan(&c.RecordID, &c.PatientID, &c.MainComplaint, &c.ExamReport, &c.Diag, &c.DRR, &c.Presciption, &c.CreateTime)
+				checkErr(err)
+
+				cld.Cases = append(cld.Cases, c)
+			}
+
+			t, _ := template.ParseFiles("caselist.gtpl")
+			err = t.Execute(w, cld)
+			log.Print("err:\t", err)
+		} else {
+			t, _ := template.ParseFiles("caselist.gtpl")
+			t.Execute(w, nil)
+		}
 	} else if r.Method == "POST" {
 
 	}
