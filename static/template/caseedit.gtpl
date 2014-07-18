@@ -5,8 +5,34 @@
 		<link rel="stylesheet" type="text/css" href="/static/css/sidebar.css" />
 		<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
 		<script type="text/javascript">
- 			function formReset(){
- 				document.getElementById("newpatient").reset()
+ 			window.onload = init;
+
+			 function init()
+			 {
+				var ajax;
+				if (window.XMLHttpRequest)
+				  {// code for IE7+, Firefox, Chrome, Opera, Safari
+				  ajax=new XMLHttpRequest();
+				  }
+				else
+				  {// code for IE6, IE5
+				  ajax=new ActiveXObject("Microsoft.XMLHTTP");
+				  }
+				ajax.onreadystatechange=function()
+				  {
+				  if (ajax.readyState==4 && ajax.status==200)
+				    {
+				    document.getElementById("patientinfo").innerHTML=ajax.responseText;
+				    }
+				  }
+				var pid;
+				pid=document.getElementById("pid").value;
+				ajax.open("GET","/patient/info?pid="+pid,true);
+				ajax.send();
+			 }
+			
+			function formReset(){
+ 				document.getElementById("newpatient").reset();
 			}
 		</script>
 	</head>
@@ -20,17 +46,9 @@
 		<form class="pure-form" id="newcase" action="/case/new" method="post">
 			<div class="pure-g">
 				<div class="pure-u-1-3">
-					编号：{{.PatientID}}<br>
-					姓名：{{.Name}}<br>
-					性别：{{.Sex}}<br>
-					生日：{{.BOD}}<br>
-					地址：{{.Address}}<br><hr>
-					既往病史：{{.PMH}}<br><hr>
-					家族病史：{{.FMH}}<br><hr>
-					过敏史：{{.Allergies}}<br><hr>
+					<div id="patientinfo"></div>
 					<fieldset>
 						<br>
-						<input type="hidden" name="pid" value="{{.PatientID}}"></input>
 						<input type="submit" class="pure-button pure-button-primary pure-input-1-3" name="b" value="提交"></input>
 						<input type="button" class="pure-button pure-button-primary pure-input-1-3" onclick="formReset()" value="重置"></input>
 					</fieldset>
@@ -45,6 +63,7 @@
 						today.getDate(),"日"); 
 					</script><br>
 					<fieldset>
+						<input type="hidden" id="pid" name="pid" value="{{.PatientID}}"></input>
 						<div class="pure-control-group">
 							<label for="<MainComplaint">主&nbsp;&nbsp;&nbsp;&nbsp;诉</label>
 							<textarea name="MainComplaint" class="pure-input-2-3" rows="3" placeholder="主诉" ></textarea>

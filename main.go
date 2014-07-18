@@ -69,7 +69,7 @@ func welcome(w http.ResponseWriter, r *http.Request) {
 
 	//log.Print(c)
 
-	t, _ := template.ParseFiles("welcome.gtpl")
+	t, _ := template.ParseFiles("static/template/welcome.gtpl")
 	t.Execute(w, c)
 }
 
@@ -83,6 +83,7 @@ func main() {
 	openbrowser("http://127.0.0.1:2273")
 
 	//设置访问的路由
+	// web pages
 	http.HandleFunc("/", welcome)
 
 	http.HandleFunc("/patient/search", PatientSearsh)
@@ -91,6 +92,12 @@ func main() {
 	http.HandleFunc("/case/new", CaseNew)
 	http.HandleFunc("/case/list", CaseList)
 	http.HandleFunc("/case/detail", CaseDetail)
+
+	// ajax
+	http.HandleFunc("/patient/info", PatientInfo)
+	http.HandleFunc("/case/info", CaseInfo)
+
+	// static files
 	http.HandleFunc("/static/", func(w http.ResponseWriter, req *http.Request) {
 		http.ServeFile(w, req, req.URL.Path[1:])
 	})

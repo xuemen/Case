@@ -5,6 +5,32 @@
 		<link rel="stylesheet" type="text/css" href="/static/css/sidebar.css" />
 		<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
 		<script type="text/javascript">
+ 			window.onload = init;
+
+			 function init()
+			 {
+				var ajax;
+				if (window.XMLHttpRequest)
+				  {// code for IE7+, Firefox, Chrome, Opera, Safari
+				  ajax=new XMLHttpRequest();
+				  }
+				else
+				  {// code for IE6, IE5
+				  ajax=new ActiveXObject("Microsoft.XMLHTTP");
+				  }
+				var rid;
+				rid=document.getElementById("rid").value;
+				ajax.open("GET","/case/info?readonly=true&rid="+rid,false);
+				ajax.send();
+				document.getElementById("caseinfo").innerHTML=ajax.responseText;
+				
+				var pid;
+				pid=document.getElementById("pid").value;
+				ajax.open("GET","/patient/info?pid="+pid,false);
+				ajax.send();
+				document.getElementById("patientinfo").innerHTML=ajax.responseText;
+			 }
+					
 			 function flip()
 			 {
 				MainComplaint = document.getElementById('MainComplaint');
@@ -43,48 +69,18 @@
 		<form class="pure-form" id="casedetial" action="/case/new" method="post">
 			<div class="pure-g">
 				<div class="pure-u-1-3">
-					编号：{{.PatientID}}<br>
-					姓名：{{.Name}}<br>
-					性别：{{.Sex}}<br>
-					生日：{{.BOD}}<br>
-					地址：{{.Address}}<br><hr>
-					既往病史：{{.PMH}}<br><hr>
-					家族病史：{{.FMH}}<br><hr>
-					过敏史：{{.Allergies}}<br><hr>
+					<div id="patientinfo"></div>
 					<fieldset>
 						<br>
-						<input type="hidden" name="rid" value="{{.RecordID}}"></input>
 						<input type="submit" class="pure-button pure-button-primary pure-input-1-3" name="b" value="提交"></input>
 						<input type="button" id="edit" class="pure-button pure-button-primary pure-input-1-3" onclick="flip()" value="编辑"></input>
 					</fieldset>
 				</div>
 				<div class="pure-u-2-3" align="center">
-					就诊日期：{{.CreateTime}}<br>
+					
 					<fieldset>
-						<div class="pure-control-group">
-							<label for="<MainComplaint">主&nbsp;&nbsp;&nbsp;&nbsp;诉</label>
-							<textarea id="MainComplaint" name="MainComplaint" class="pure-input-2-3" rows="3" placeholder="主诉">{{.MainComplaint}}</textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="ExamReport">检查报告</label>
-							<textarea id="ExamReport" name="ExamReport" class="pure-input-2-3" rows="3" placeholder="检查报告" >{{.ExamReport}}</textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="Diag">诊&nbsp;&nbsp;&nbsp;&nbsp;断</label>
-							<input type="text" id="Diag" name="Diag" class="pure-input-2-3" placeholder="诊断" value="{{.Diag}}"></input>
-						</div>
-						<div class="pure-control-group">
-							<label for="DRR">医&nbsp;&nbsp;&nbsp;&nbsp;嘱</label>
-							<textarea id="DRR" name="DRR" class="pure-input-2-3" rows="3" placeholder="医嘱" >{{.DRR}}</textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="Presciption">处&nbsp;&nbsp;&nbsp;&nbsp;方</label>
-							<textarea id="Presciption" name="Presciption" class="pure-input-2-3" rows="3" placeholder="处方" >{{.Presciption}}</textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="Notes">备&nbsp;&nbsp;&nbsp;&nbsp;注</label>
-							<textarea id="Notes" name="Notes" class="pure-input-2-3" rows="3" placeholder="备注" >{{.Notes}}</textarea>
-						</div>
+						<input type="hidden" id="rid" name="rid" value="{{.RecordID}}"></input>
+						<div id="caseinfo"></div>
 					</fieldset>
 				
 				</div>
