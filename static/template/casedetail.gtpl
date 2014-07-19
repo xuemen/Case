@@ -25,12 +25,57 @@
 				document.getElementById("caseinfo").innerHTML=ajax.responseText;
 				
 				var pid;
-				pid=document.getElementById("pid").value;
+				pid=document.getElementById("r_pid").value;
 				ajax.open("GET","/patient/info?pid="+pid,false);
 				ajax.send();
 				document.getElementById("patientinfo").innerHTML=ajax.responseText;
 			 }
+				
+			
+			function gotolast()
+			{
+				var rid;
+				rid=document.getElementById("rid").value;
+				
+				var intrid=parseInt(rid);
+				if(intrid > 0) {
+					intrid=intrid-1;
+					document.getElementById("rid").value=intrid.toString();
+				
+					init();	
+				}
+			}
+			
+			function gotonext()
+			{
+				var rid;
+				rid=document.getElementById("rid").value;
+				
+				var intrid=parseInt(rid);
+				if(document.getElementById("MainComplaint") != null) {
+					intrid=intrid+1;
+					document.getElementById("rid").value=intrid.toString();
 					
+					init();
+				}
+			}	
+			
+			function addnew()
+			{
+				var pid;
+				pid=document.getElementById("r_pid").value;
+				
+				window.location="/case/new?pid="+pid
+			}
+			
+			function copynew()
+			{
+				var rid;
+				rid=document.getElementById("rid").value;
+				
+				window.location="/case/new?rid="+rid
+			}
+			
 			 function flip()
 			 {
 				MainComplaint = document.getElementById('MainComplaint');
@@ -66,7 +111,7 @@
 			<hr>
 		</div>
 
-		<form class="pure-form" id="casedetial" action="/case/new" method="post">
+		<form class="pure-form" id="casedetial" action="/case/detail" method="post">
 			<div class="pure-g">
 				<div class="pure-u-1-3">
 					<div id="patientinfo"></div>
@@ -74,6 +119,10 @@
 						<br>
 						<input type="submit" class="pure-button pure-button-primary pure-input-1-3" name="b" value="提交"></input>
 						<input type="button" id="edit" class="pure-button pure-button-primary pure-input-1-3" onclick="flip()" value="编辑"></input>
+						<input type="button" id="next" class="pure-button pure-button-primary pure-input-1-3" onclick="gotonext()" value="下一份"></input>
+						<input type="button" id="last" class="pure-button pure-button-primary pure-input-1-3" onclick="gotolast()" value="上一份"></input>
+						<input type="button" id="new" class="pure-button pure-button-primary pure-input-1-3" onclick="addnew()" value="新增空白病历"></input>
+						<input type="button" id="copy" class="pure-button pure-button-primary pure-input-1-3" onclick="copynew()" value="拷贝到新病历"></input>
 					</fieldset>
 				</div>
 				<div class="pure-u-2-3" align="center">

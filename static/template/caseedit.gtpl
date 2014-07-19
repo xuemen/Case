@@ -18,21 +18,55 @@
 				  {// code for IE6, IE5
 				  ajax=new ActiveXObject("Microsoft.XMLHTTP");
 				  }
-				ajax.onreadystatechange=function()
-				  {
-				  if (ajax.readyState==4 && ajax.status==200)
-				    {
-				    document.getElementById("patientinfo").innerHTML=ajax.responseText;
-				    }
-				  }
+				var rid;
+				if(document.getElementById("rid").value!="")
+				{
+					rid=document.getElementById("rid").value;
+					ajax.open("GET","/case/info?readonly=true&rid="+rid,false);
+					ajax.send();
+					document.getElementById("caseinfo").innerHTML=ajax.responseText;
+				}
+				
 				var pid;
-				pid=document.getElementById("pid").value;
-				ajax.open("GET","/patient/info?pid="+pid,true);
+				if(document.getElementById("r_pid").value=="")
+				{
+					pid=document.getElementById("pid").value;	
+				}else
+				{
+					pid=document.getElementById("r_pid").value;	
+				}
+				
+				ajax.open("GET","/patient/info?pid="+pid,false);
 				ajax.send();
+				document.getElementById("patientinfo").innerHTML=ajax.responseText;
+				
+				var myDate = new Date();
+				document.getElementById("recordtime").innerHTML = myDate.toLocaleString( );
+				
+				MainComplaint = document.getElementById('MainComplaint');
+				ExamReport = document.getElementById('ExamReport');
+				Diag = document.getElementById('Diag');
+				DRR = document.getElementById('DRR');
+				Presciption = document.getElementById('Presciption');
+				Notes = document.getElementById('Notes');
+				
+				MainComplaint.removeAttribute("disabled");
+				ExamReport.removeAttribute("disabled");
+				Diag.removeAttribute("disabled");
+				DRR.removeAttribute("disabled");
+				Presciption.removeAttribute("disabled");
+				Notes.removeAttribute("disabled");
 			 }
 			
 			function formReset(){
- 				document.getElementById("newpatient").reset();
+ 				document.getElementById("newcase").reset();
+				
+				document.getElementById("MainComplaint").value = "";
+				document.getElementById("ExamReport").value = "";
+				document.getElementById("Diag").value = "";
+				document.getElementById("DRR").value = "";
+				document.getElementById("Presciption").value = "";
+				document.getElementById("Notes").value = "";
 			}
 		</script>
 	</head>
@@ -54,39 +88,44 @@
 					</fieldset>
 				</div>
 				<div class="pure-u-2-3" align="center">
-					就诊日期：
-					<script language=JavaScript> 
-					today=new Date(); 
-					document.write(
-						today.getYear(),"年", 
-						today.getMonth()+1,"月", 
-						today.getDate(),"日"); 
-					</script><br>
+					
 					<fieldset>
+						<input type="hidden" id="rid" name="rid" value="{{.RecordID}}"></input>
 						<input type="hidden" id="pid" name="pid" value="{{.PatientID}}"></input>
-						<div class="pure-control-group">
-							<label for="<MainComplaint">主&nbsp;&nbsp;&nbsp;&nbsp;诉</label>
-							<textarea name="MainComplaint" class="pure-input-2-3" rows="3" placeholder="主诉" ></textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="ExamReport">检查报告</label>
-							<textarea name="ExamReport" class="pure-input-2-3" rows="3" placeholder="检查报告" ></textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="Diag">诊&nbsp;&nbsp;&nbsp;&nbsp;断</label>
-							<input type="text" name="Diag" class="pure-input-2-3" placeholder="诊断"></input>
-						</div>
-						<div class="pure-control-group">
-							<label for="DRR">医&nbsp;&nbsp;&nbsp;&nbsp;嘱</label>
-							<textarea name="DRR" class="pure-input-2-3" rows="3" placeholder="医嘱" ></textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="Presciption">处&nbsp;&nbsp;&nbsp;&nbsp;方</label>
-							<textarea name="Presciption" class="pure-input-2-3" rows="3" placeholder="处方" ></textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="Notes">备&nbsp;&nbsp;&nbsp;&nbsp;注</label>
-							<textarea name="Notes" class="pure-input-2-3" rows="3" placeholder="备注" ></textarea>
+						<div id="caseinfo">
+							就诊日期：
+							<script language=JavaScript> 
+							today=new Date(); 
+							document.write(
+								today.getYear(),"年", 
+								today.getMonth()+1,"月", 
+								today.getDate(),"日"); 
+							</script><br>
+							<input type="hidden" id="r_pid" name="r_pid" value=""></input>
+							<div class="pure-control-group">
+								<label for="<MainComplaint">主&nbsp;&nbsp;&nbsp;&nbsp;诉</label>
+								<textarea name="MainComplaint" class="pure-input-2-3" rows="3" placeholder="主诉" ></textarea>
+							</div>
+							<div class="pure-control-group">
+								<label for="ExamReport">检查报告</label>
+								<textarea name="ExamReport" class="pure-input-2-3" rows="3" placeholder="检查报告" ></textarea>
+							</div>
+							<div class="pure-control-group">
+								<label for="Diag">诊&nbsp;&nbsp;&nbsp;&nbsp;断</label>
+								<input type="text" name="Diag" class="pure-input-2-3" placeholder="诊断"></input>
+							</div>
+							<div class="pure-control-group">
+								<label for="DRR">医&nbsp;&nbsp;&nbsp;&nbsp;嘱</label>
+								<textarea name="DRR" class="pure-input-2-3" rows="3" placeholder="医嘱" ></textarea>
+							</div>
+							<div class="pure-control-group">
+								<label for="Presciption">处&nbsp;&nbsp;&nbsp;&nbsp;方</label>
+								<textarea name="Presciption" class="pure-input-2-3" rows="3" placeholder="处方" ></textarea>
+							</div>
+							<div class="pure-control-group">
+								<label for="Notes">备&nbsp;&nbsp;&nbsp;&nbsp;注</label>
+								<textarea name="Notes" class="pure-input-2-3" rows="3" placeholder="备注" ></textarea>
+							</div>
 						</div>
 					</fieldset>
 				

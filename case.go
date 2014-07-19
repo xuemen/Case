@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -20,6 +21,30 @@ type RID struct {
 	RecordID string
 }
 
+type RPID struct {
+	RecordID  string
+	PatientID string
+}
+
+type Case struct {
+	RecordID      int
+	MainComplaint string
+	ExamReport    string
+	Diag          string
+	DRR           string
+	Presciption   string
+	CreateTime    string
+}
+
+type CaseListData struct {
+	PatientID int
+	Name      string
+	Sex       string
+	BOD       string
+	Address   string
+	Cases     []Case
+}
+
 type CaseDetailData struct {
 	RecordID      int
 	PatientID     int
@@ -30,7 +55,6 @@ type CaseDetailData struct {
 	Presciption   string
 	Notes         string
 	CreateTime    string
-	ReadOnly      string
 }
 
 func CaseNew(w http.ResponseWriter, r *http.Request) {
@@ -44,10 +68,15 @@ func CaseNew(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		if len(r.Form["pid"]) > 0 {
+		if len(r.Form["rid"]) > 0 {
 			t, _ := template.ParseFiles("static/template/caseedit.gtpl")
-			p := PID{PatientID: r.Form["pid"][0]}
-			err := t.Execute(w, p)
+			rp := RPID{RecordID: r.Form["rid"][0], PatientID: ""}
+			err := t.Execute(w, rp)
+			log.Print("err:\t", err)
+		} else if len(r.Form["pid"]) > 0 {
+			t, _ := template.ParseFiles("static/template/caseedit.gtpl")
+			rp := RPID{RecordID: "", PatientID: r.Form["pid"][0]}
+			err := t.Execute(w, rp)
 			log.Print("err:\t", err)
 		} else {
 			t, _ := template.ParseFiles("static/template/caseedit.gtpl")
@@ -74,25 +103,6 @@ func CaseNew(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "<script>window.location=\"/\"</script>")
 	}
 
-}
-
-type Case struct {
-	RecordID      int
-	MainComplaint string
-	ExamReport    string
-	Diag          string
-	DRR           string
-	Presciption   string
-	CreateTime    string
-}
-
-type CaseListData struct {
-	PatientID int
-	Name      string
-	Sex       string
-	BOD       string
-	Address   string
-	Cases     []Case
 }
 
 func CaseList(w http.ResponseWriter, r *http.Request) {
@@ -176,7 +186,25 @@ func CaseDetail(w http.ResponseWriter, r *http.Request) {
 			t.Execute(w, nil)
 		}
 	} else if r.Method == "POST" {
+		sqlstr := fmt.Sprintf("update record set patientid=%s,MainComplaint=\"%s\",ExamReport=\"%s\",Diag=\"%s\",DRR=\"%s\",Presciption=\"%s\",Notes=\"%s\",SubmitTime=datetime(\"now\",\"localtime\"),IsTemplate=0,Status=%d where RecordID=%s",
+			r.Form["pid"][0],
+			r.Form["MainComplaint"][0],
+			r.Form["ExamReport"][0],
+			r.Form["Diag"][0],
+			r.Form["DRR"][0],
+			r.Form["Presciption"][0],
+			r.Form["Notes"][0],
+			CaseStatusSubmitted,
+			r.Form["rid"][0])
 
+		log.Print("sqlstr:\t", sqlstr)
+		db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
+		defer db.Close()
+		result, err := db.Exec(sqlstr)
+		checkErr(err)
+		log.Print("result:\t", result)
+
+		fmt.Fprint(w, "<script>window.location=\"/\"</script>")
 	}
 
 }
@@ -203,21 +231,26 @@ func CaseInfo(w http.ResponseWriter, r *http.Request) {
 
 			//log.Print(rows)
 			var c CaseDetailData
-			if len(r.Form["readonly"]) > 0 {
-				c.ReadOnly = "true"
-			} else {
-				c.ReadOnly = ""
-			}
+
+			var hasRes bool
+			hasRes = false
 
 			for rows.Next() {
 				err = rows.Scan(&c.RecordID, &c.PatientID, &c.MainComplaint, &c.ExamReport, &c.Diag, &c.DRR, &c.Presciption, &c.Notes, &c.CreateTime)
 				checkErr(err)
+				hasRes = true
 			}
 			log.Print("c:\t", c)
 
-			t, err := template.ParseFiles("static/template/caseinfo.gtpl")
-			err = t.Execute(w, c)
-			log.Print("err:\t", err)
+			if hasRes {
+				t, err := template.ParseFiles("static/template/caseinfo.gtpl")
+				err = t.Execute(w, c)
+				log.Print("err:\t", err)
+				err = t.Execute(os.Stdout, c)
+			} else {
+				fmt.Fprintf(w, "没有这份病历，编号：%s", r.Form["rid"][0])
+			}
+
 		} else {
 			fmt.Fprint(w, "未指定病历编号。")
 		}
