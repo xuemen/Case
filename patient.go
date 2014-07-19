@@ -172,7 +172,7 @@ func PatientNew(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("patientnew.gtpl")
+		t, _ := template.ParseFiles("static/template/patientnew.gtpl")
 		t.Execute(w, nil)
 	} else if r.Method == "POST" {
 		if (len(r.Form["id"][0]) == 0) || (len(r.Form["name"][0]) == 0) {

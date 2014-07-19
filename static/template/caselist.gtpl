@@ -11,7 +11,7 @@
 			<h1>历史诊疗记录</h1>
 			<hr>
 		</div>
-		<div class="pure-g">
+		<div class="pure-g"  style="padding: 0px 20px">
 			<div class="pure-u-1"  align="center"> 
 				编号：{{.PatientID}}
 				姓名：{{.Name}}

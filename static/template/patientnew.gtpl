@@ -17,7 +17,7 @@
 			<hr>
 		</div>
 
-		<form class="pure-form" id="newpatient" action="/patient/new" method="post">
+		<form class="pure-form" id="newpatient" action="/patient/new" method="post"  style="padding: 0px 20px">
 			<div class="pure-g">
 				<div class="pure-u-1-2" align="center">
 					<fieldset>

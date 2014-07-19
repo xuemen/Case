@@ -11,7 +11,7 @@
 			<h1>查找病人</h1>
 			<hr>
 		</div>
-		<div class="pure-g">
+		<div class="pure-g"  style="padding: 0px 20px">
 			<div class="pure-u-1"  align="center"> 
 				<form id="searchpatient" action="/patient/search#result" method="post">
 					<fieldset>
