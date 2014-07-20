@@ -37,12 +37,7 @@ type Case struct {
 }
 
 type CaseListData struct {
-	PatientID int
-	Name      string
-	Sex       string
-	BOD       string
-	Address   string
-	Cases     []Case
+	Cases []Case
 }
 
 type CaseDetailData struct {
@@ -55,6 +50,7 @@ type CaseDetailData struct {
 	Presciption   string
 	Notes         string
 	CreateTime    string
+	ReadOnly      string
 }
 
 func CaseNew(w http.ResponseWriter, r *http.Request) {
@@ -116,49 +112,34 @@ func CaseList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
+		var cld CaseListData
+		var sqlstr string
 		if len(r.Form["pid"]) > 0 {
-			sqlstr := fmt.Sprintf("select PatientID,Name,Sex,ifnull(date(BOD),\"未填写生日\"),ifnull(Address,\"未填写地址\") from Patient where PatientID = %s", r.Form["pid"][0])
-			log.Print("sqlstr:\t", sqlstr)
-
-			db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
-			defer db.Close()
-			rows, err := db.Query(sqlstr)
-			checkErr(err)
-
-			//log.Print(rows)
-			var cld CaseListData
-			for rows.Next() {
-				err = rows.Scan(&cld.PatientID, &cld.Name, &cld.Sex, &cld.BOD, &cld.Address)
-				checkErr(err)
-			}
-			log.Print("cld:\t", cld)
-
 			sqlstr = fmt.Sprintf("Select RecordID,ifnull(MainComplaint,\"未填写主诉\"),ifnull(ExamReport,\"无检验报告\"),ifnull(Diag,\"未填写诊断\"),ifnull(DRR,\"未填写医嘱\"),ifnull(Presciption,\"未填写处方\"),ifnull(datetime(CreateTime),\"未提交\") from Record where PatientID = %s limit 100", r.Form["pid"][0])
-			log.Print("sqlstr:\t", sqlstr)
+		} else {
+			sqlstr = "Select RecordID,ifnull(MainComplaint,\"未填写主诉\"),ifnull(ExamReport,\"无检验报告\"),ifnull(Diag,\"未填写诊断\"),ifnull(DRR,\"未填写医嘱\"),ifnull(Presciption,\"未填写处方\"),ifnull(datetime(CreateTime),\"未提交\") from Record limit 100"
+		}
+		log.Print("sqlstr:\t", sqlstr)
 
-			rows, err = db.Query(sqlstr)
+		db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
+		defer db.Close()
+		rows, err := db.Query(sqlstr)
+		checkErr(err)
+
+		//log.Print(rows)
+		var CArray [100]Case
+		cld.Cases = CArray[0:0]
+		for rows.Next() {
+			var c Case
+
+			err = rows.Scan(&c.RecordID, &c.MainComplaint, &c.ExamReport, &c.Diag, &c.DRR, &c.Presciption, &c.CreateTime)
 			checkErr(err)
 
-			//log.Print(rows)
-			var CArray [100]Case
-			cld.Cases = CArray[0:0]
-
-			for rows.Next() {
-				var c Case
-
-				err = rows.Scan(&c.RecordID, &c.MainComplaint, &c.ExamReport, &c.Diag, &c.DRR, &c.Presciption, &c.CreateTime)
-				checkErr(err)
-
-				cld.Cases = append(cld.Cases, c)
-			}
-
-			t, _ := template.ParseFiles("static/template/caselist.gtpl")
-			err = t.Execute(w, cld)
-			log.Print("err:\t", err)
-		} else {
-			t, _ := template.ParseFiles("static/template/caselist.gtpl")
-			t.Execute(w, nil)
+			cld.Cases = append(cld.Cases, c)
 		}
+		t, _ := template.ParseFiles("static/template/caselist.gtpl")
+		err = t.Execute(w, cld)
+		log.Print("err:\t", err)
 	} else if r.Method == "POST" {
 
 	}
@@ -231,6 +212,9 @@ func CaseInfo(w http.ResponseWriter, r *http.Request) {
 
 			//log.Print(rows)
 			var c CaseDetailData
+			if len(r.Form["readonly"]) > 0 {
+				c.ReadOnly = "true"
+			}
 
 			var hasRes bool
 			hasRes = false

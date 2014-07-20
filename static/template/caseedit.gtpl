@@ -19,21 +19,21 @@
 				  ajax=new ActiveXObject("Microsoft.XMLHTTP");
 				  }
 				var rid;
-				if(document.getElementById("rid").value!="")
+				if(GetQueryString("rid")!=null)
 				{
-					rid=document.getElementById("rid").value;
-					ajax.open("GET","/case/info?readonly=true&rid="+rid,false);
+					rid=GetQueryString("rid");
+					ajax.open("GET","/case/info?rid="+rid,false);
 					ajax.send();
 					document.getElementById("caseinfo").innerHTML=ajax.responseText;
 				}
 				
 				var pid;
-				if(document.getElementById("r_pid").value=="")
+				if(GetQueryString("pid")!=null)
 				{
-					pid=document.getElementById("pid").value;	
+					pid=GetQueryString("pid");	
 				}else
 				{
-					pid=document.getElementById("r_pid").value;	
+					pid=document.getElementById("pid").value;	
 				}
 				
 				ajax.open("GET","/patient/info?pid="+pid,false);
@@ -50,7 +50,7 @@
 				Presciption = document.getElementById('Presciption');
 				Notes = document.getElementById('Notes');
 				
-				MainComplaint.removeAttribute("disabled");
+				
 				ExamReport.removeAttribute("disabled");
 				Diag.removeAttribute("disabled");
 				DRR.removeAttribute("disabled");
@@ -67,6 +67,12 @@
 				document.getElementById("DRR").value = "";
 				document.getElementById("Presciption").value = "";
 				document.getElementById("Notes").value = "";
+			}
+			
+			function GetQueryString(name) {
+			   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
+			   var r = window.location.search.substr(1).match(reg);
+			   if (r!=null) return unescape(r[2]); return null;
 			}
 		</script>
 	</head>
@@ -90,8 +96,6 @@
 				<div class="pure-u-2-3" align="center">
 					
 					<fieldset>
-						<input type="hidden" id="rid" name="rid" value="{{.RecordID}}"></input>
-						<input type="hidden" id="pid" name="pid" value="{{.PatientID}}"></input>
 						<div id="caseinfo">
 							就诊日期：
 							<script language=JavaScript> 
@@ -146,7 +150,7 @@
 					<li onclick="window.location.href='/patient/search'">查找病人</li>
 					<li onclick="window.location.href='/patient/new'">新增病人</li>
 					<li class="devider"></li>
-					<li onclick="window.location.href='/case/search'">查找病历</li>
+					<li onclick="window.location.href='/case/list'">查找病历</li>
 				</ul>
 			</div>
 		</div>

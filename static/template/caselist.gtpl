@@ -4,6 +4,47 @@
 		<meta charset="UTF-8"> 
 		<link rel="stylesheet" type="text/css" href="/static/css/sidebar.css" />
 		<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
+		<script type="text/javascript">
+ 			window.onload = init;
+
+			 function init()
+			 {
+				var pid;
+
+				if(GetQueryString("pid")!=null)
+				{
+					pid=GetQueryString("pid");	
+					
+					var ajax;
+					if (window.XMLHttpRequest)
+					  {// code for IE7+, Firefox, Chrome, Opera, Safari
+					  ajax=new XMLHttpRequest();
+					  }
+					else
+					  {// code for IE6, IE5
+					  ajax=new ActiveXObject("Microsoft.XMLHTTP");
+					  }
+					ajax.open("GET","/patient/brief?pid="+pid,false);
+					ajax.send();
+					document.getElementById("patientbrief").innerHTML=ajax.responseText;
+				}
+			 }
+			
+			function godetail(){
+				var pid;
+				if(GetQueryString("pid")!=null)
+				{
+					pid=GetQueryString("pid");	
+					window.location.href="/case/detail?pid=" + pid;
+				}
+			}
+			
+			function GetQueryString(name) {
+			   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
+			   var r = window.location.search.substr(1).match(reg);
+			   if (r!=null) return unescape(r[2]); return null;
+			}
+		</script>
 	</head>
 	<body>
 		<!--content begin-->
@@ -13,11 +54,7 @@
 		</div>
 		<div class="pure-g"  style="padding: 0px 20px">
 			<div class="pure-u-1"  align="center"> 
-				编号：{{.PatientID}}
-				姓名：{{.Name}}
-				性别：{{.Sex}}
-				生日：{{.BOD}}
-				地址：{{.Address}}
+				<div id="patientbrief"></div>
 			</div>
 			<hr>
 			<a name="result"></a>
@@ -40,7 +77,7 @@
 			</div>
 			<hr>
 			<div class="pure-u-1"  align="center"> 
-				<button class="pure-button pure-button-primary" onclick="window.location.href='/case/detail?pid={{.PatientID}}'">添加新病例</button>
+				<button class="pure-button pure-button-primary" onclick="godetail()">添加新病例</button>
 			</div>
 		</div>
 		<!--content end-->
@@ -57,7 +94,7 @@
 					<li onclick="window.location.href='/patient/search'">查找病人</li>
 					<li onclick="window.location.href='/patient/new'">新增病人</li>
 					<li class="devider"></li>
-					<li onclick="window.location.href='/case/search'">查找病历</li>
+					<li onclick="window.location.href='/case/list'">查找病历</li>
 				</ul>
 			</div>
 		</div>

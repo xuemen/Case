@@ -19,13 +19,13 @@
 				  ajax=new ActiveXObject("Microsoft.XMLHTTP");
 				  }
 				var rid;
-				rid=document.getElementById("rid").value;
+				rid=GetQueryString("rid");
 				ajax.open("GET","/case/info?readonly=true&rid="+rid,false);
 				ajax.send();
 				document.getElementById("caseinfo").innerHTML=ajax.responseText;
 				
 				var pid;
-				pid=document.getElementById("r_pid").value;
+				pid=document.getElementById("pid").value;
 				ajax.open("GET","/patient/info?pid="+pid,false);
 				ajax.send();
 				document.getElementById("patientinfo").innerHTML=ajax.responseText;
@@ -35,35 +35,31 @@
 			function gotolast()
 			{
 				var rid;
-				rid=document.getElementById("rid").value;
+				rid=GetQueryString("rid");
 				
 				var intrid=parseInt(rid);
 				if(intrid > 0) {
 					intrid=intrid-1;
-					document.getElementById("rid").value=intrid.toString();
-				
-					init();	
+					window.location="/case/detail?rid="+intrid
 				}
 			}
 			
 			function gotonext()
 			{
 				var rid;
-				rid=document.getElementById("rid").value;
+				rid=GetQueryString("rid");
 				
 				var intrid=parseInt(rid);
-				if(document.getElementById("MainComplaint") != null) {
+				if((document.getElementById("MainComplaint") != null)||(intrid == 0)) {
 					intrid=intrid+1;
-					document.getElementById("rid").value=intrid.toString();
-					
-					init();
+					window.location="/case/detail?rid="+intrid
 				}
 			}	
 			
 			function addnew()
 			{
 				var pid;
-				pid=document.getElementById("r_pid").value;
+				pid=document.getElementById("pid").value;
 				
 				window.location="/case/new?pid="+pid
 			}
@@ -71,7 +67,7 @@
 			function copynew()
 			{
 				var rid;
-				rid=document.getElementById("rid").value;
+				rid=GetQueryString("rid");
 				
 				window.location="/case/new?rid="+rid
 			}
@@ -102,6 +98,12 @@
 					Notes.setAttribute("disabled","disabled");
             	}
 			 }
+			
+			function GetQueryString(name) {
+			   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
+			   var r = window.location.search.substr(1).match(reg);
+			   if (r!=null) return unescape(r[2]); return null;
+			}
 		</script>	
 	</head>
 	<body>
@@ -128,7 +130,6 @@
 				<div class="pure-u-2-3" align="center">
 					
 					<fieldset>
-						<input type="hidden" id="rid" name="rid" value="{{.RecordID}}"></input>
 						<div id="caseinfo"></div>
 					</fieldset>
 				
@@ -149,7 +150,7 @@
 					<li onclick="window.location.href='/patient/search'">查找病人</li>
 					<li onclick="window.location.href='/patient/new'">新增病人</li>
 					<li class="devider"></li>
-					<li onclick="window.location.href='/case/search'">查找病历</li>
+					<li onclick="window.location.href='/case/list'">查找病历</li>
 				</ul>
 			</div>
 		</div>

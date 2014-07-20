@@ -261,3 +261,40 @@ func PatientInfo(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func PatientBrief(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm() //解析参数，默认是不会解析的
+	fmt.Println("method", r.Method)
+	fmt.Println("path", r.URL.Path)
+
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
+
+	if r.Method == "GET" {
+		if len(r.Form["pid"]) > 0 {
+			sqlstr := fmt.Sprintf("select PatientID,Name,Sex,ifnull(date(BOD),\"未填写生日\"),ifnull(Address,\"未填写地址\") from Patient where PatientID = %s", r.Form["pid"][0])
+			log.Print("sqlstr:\t", sqlstr)
+
+			db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
+			defer db.Close()
+
+			rows, err := db.Query(sqlstr)
+			checkErr(err)
+
+			//log.Print(rows)
+			var p Patient
+			for rows.Next() {
+				err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.BOD, &p.Address)
+				checkErr(err)
+			}
+			log.Print("p:\t", p)
+			t, _ := template.ParseFiles("static/template/patientbrief.gtpl")
+			err = t.Execute(w, p)
+			log.Print("err:\t", err)
+		} else {
+			fmt.Fprint(w, "未指定病人编号。")
+		}
+	}
+}

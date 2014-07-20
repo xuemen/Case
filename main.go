@@ -95,6 +95,7 @@ func main() {
 
 	// ajax
 	http.HandleFunc("/patient/info", PatientInfo)
+	http.HandleFunc("/patient/brief", PatientBrief)
 	http.HandleFunc("/case/info", CaseInfo)
 
 	// static files

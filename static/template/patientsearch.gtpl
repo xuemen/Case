@@ -88,7 +88,7 @@
 					<li onclick="window.location.href='/patient/search'">查找病人</li>
 					<li onclick="window.location.href='/patient/new'">新增病人</li>
 					<li class="devider"></li>
-					<li onclick="window.location.href='/case/search'">查找病历</li>
+					<li onclick="window.location.href='/case/list'">查找病历</li>
 				</ul>
 			</div>
 		</div>
