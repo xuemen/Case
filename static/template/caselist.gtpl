@@ -2,8 +2,8 @@
 <html lang="zh-cmn-Hans">
 	<head>
 		<meta charset="UTF-8"> 
-		<link rel="stylesheet" type="text/css" href="/static/css/sidebar.css" />
-		<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
+		<link rel="stylesheet" type="text/css" href="sidebar.css" />
+		<link rel="stylesheet" type="text/css" href="pure-min.css" />
 		<script type="text/javascript">
  			window.onload = init;
 
