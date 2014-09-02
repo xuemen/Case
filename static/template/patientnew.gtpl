@@ -43,7 +43,7 @@
 						</div>
 						<div class="pure-control-group">
 							<label for="Address">地址</label>
-							<input type="email" name="Address" class="pure-input-2-3" placeholder="地址">
+							<input type="text" name="Address" class="pure-input-2-3" placeholder="地址">
 						</div>
 						<br>
 						<input type="submit" class="pure-button pure-button-primary pure-input-1-3" name="b" value="提交"></input>
@@ -83,6 +83,9 @@
 					<li onclick="window.location.href='/patient/new'">新增病人</li>
 					<li class="devider"></li>
 					<li onclick="window.location.href='/case/list'">查找病历</li>
+					<li class="devider"></li>
+					<li onclick="window.open('http://www.processon.com/myteams/539577890cf21885c69f20b3#diagrams')">设计图样</li>
+					<li onclick="window.open('http://git.oschina.net/hyg/Case/issues')">质量反馈</li>
 				</ul>
 			</div>
 		</div>
