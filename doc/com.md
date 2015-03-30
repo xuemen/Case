@@ -72,9 +72,8 @@
 *  导入
 	1. 把部署包解压缩到工作路径。
 	2. 运行执行文件后选择“导入”，选择数据包。
-*  门诊：
-![泳道图](http://www.processon.com/view/link/54dd841de4b0f67889144001)
-
+*  门诊：[在线泳道图](http://www.processon.com/view/link/54dd841de4b0f67889144001)
+![workflow](门诊.png)
 
 * 
 
