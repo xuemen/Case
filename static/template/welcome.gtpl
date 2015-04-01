@@ -3,7 +3,7 @@
 <head>
   <title>欢迎</title>
   <meta charset="UTF-8"> 
-  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.3.0/pure-min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
 </head>
 <body>
 <div class="header" align="center">

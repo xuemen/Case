@@ -80,6 +80,10 @@ func serveFile(pattern string, filename string) {
 }
 
 func main() {
+	yamlinit()
+	yamltestdate()
+	yamlcleardata()
+	return
 	openbrowser("http://127.0.0.1:2273")
 
 	//设置访问的路由
