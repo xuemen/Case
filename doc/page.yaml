@@ -7,7 +7,25 @@ page:
   behavior:
   - event:
     script:
-	next:
+    next:
+- code:
+  name:"1.2"
+  title:"西医检查"
+  drafturl:"http://www.processon.com/view/link/551bd4d0e4b0faba907dd4ba"
+  status:
+  behavior:
+  - event:
+    script:
+    next:
+- code:
+  name:"1.3"
+  title:"诊断治疗"
+  drafturl:"http://www.processon.com/view/link/551be49fe4b00de3e858755d"
+  status:
+  behavior:
+  - event:
+    script:
+    next:
 - code:
   name:"1.6"
   title:"新增患者"
@@ -16,7 +34,7 @@ page:
   behavior:
   - event:
     script:
-	next:
+    next:
 - code:
   name:"1.7"
   title:"导入患者"
@@ -25,7 +43,7 @@ page:
   behavior:
   - event:
     script:
-	next:
+    next:
 - code:
   name:"1.9"
   title:"医案查询"
@@ -34,4 +52,4 @@ page:
   behavior:
   - event:
     script:
-	next:
+    next:
