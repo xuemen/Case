@@ -1,5 +1,16 @@
 page:
 - code:
+  name:"welcome"
+  title:"首页"
+  drafturl:"http://www.processon.com/view/link/551cadf5e4b0f7080ab5e13d"
+  status:
+  behavior:
+  - event:
+    script:
+    next:
+  remark: |+
+  
+- code:
   name:"1.1"
   title:"四诊信息"
   drafturl:"http://www.processon.com/view/link/551b95bce4b03f4b8f07caec"
