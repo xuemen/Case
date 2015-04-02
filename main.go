@@ -83,8 +83,10 @@ func main() {
 	yamltestdata()
 	yamlinit()
 	log.Print(index)
-	log.Print(parray[9])
-	log.Print(rarray[9])
+	log.Printf("length of psclie = %d", len(pslice))
+	log.Print(pslice[9])
+	log.Printf("length of rsclie = %d", len(rslice))
+	log.Print(rslice[9])
 	yamlcleardata()
 	return
 	openbrowser("http://127.0.0.1:2273")

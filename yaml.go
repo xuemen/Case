@@ -14,8 +14,8 @@ type Index struct {
 }
 
 var index Index
-var parray [1000]Patient
-var rarray [10000]Case
+var pslice []Patient
+var rslice []Case
 
 func yamlinit() {
 	indexbyte, _ := ioutil.ReadFile("data\\index.yaml")
@@ -34,7 +34,7 @@ func yamlinit() {
 		pbyte, _ = ioutil.ReadFile(filename)
 		yaml.Unmarshal(pbyte, &p)
 
-		parray[pid] = p
+		pslice = append(pslice, p)
 	}
 
 	for rid := 0; rid <= index.MaxRecordID; rid++ {
@@ -42,7 +42,7 @@ func yamlinit() {
 		rbyte, _ = ioutil.ReadFile(filename)
 		yaml.Unmarshal(rbyte, &r)
 
-		rarray[rid] = r
+		rslice = append(rslice, r)
 	}
 }
 
