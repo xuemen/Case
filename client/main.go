@@ -80,15 +80,12 @@ func serveFile(pattern string, filename string) {
 }
 
 func main() {
+	pagetestdata()
+	pageinit()
+	return
 	yamltestdata()
 	yamlinit()
-	log.Print(index)
-	log.Printf("length of psclie = %d", len(pslice))
-	log.Print(pslice[9])
-	log.Printf("length of rsclie = %d", len(rslice))
-	log.Print(rslice[9])
-	yamlcleardata()
-	return
+
 	openbrowser("http://127.0.0.1:2273")
 
 	//设置访问的路由
