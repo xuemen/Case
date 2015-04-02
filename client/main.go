@@ -80,7 +80,7 @@ func serveFile(pattern string, filename string) {
 }
 
 func main() {
-	pagetestdata()
+	//pagetestdata()
 	pageinit()
 	return
 	yamltestdata()

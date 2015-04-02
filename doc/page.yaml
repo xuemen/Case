@@ -1,74 +1,84 @@
 page:
-- code:
-  name:welcome
-  title:首页
-  path:/
-  drafturl:http://www.processon.com/view/link/551cadf5e4b0f7080ab5e13d
-  status:
+- code: 1
+  name: welcome
+  title: 首页
+  path: /
+  draft: http://www.processon.com/view/link/551cadf5e4b0f7080ab5e13d
+  status: 1
   behavior:
-  - event:
-    script:
-    next:
-  remark:|+
-    需要自动检测是否在线，显示正确的内容。
-    需要自动检测是否有密钥对等信息，显示正确内容。
-- code:
-  name:1.1
-  title:四诊信息
-  path:/
-  drafturl:http://www.processon.com/view/link/551b95bce4b03f4b8f07caec
-  status:
+  - event: 1
+    script: b1 srcipt
+    next: 2
+  - event: 2
+    script: b2 srcipt
+    next: 3
+  remark: "需要自动检测是否在线，显示正确的内容。\n\r需要自动检测是否有密钥对等信息，显示正确内容。"
+- code: 2
+  name: "1.1"
+  title: 四诊信息
+  path: /record/new
+  draft: http://www.processon.com/view/link/551b95bce4b03f4b8f07caec
+  status: 1
   behavior:
-  - event:
-    script:
-    next:
-- code:
-  name:1.2
-  title:西医检查
-  path:/
-  drafturl:http://www.processon.com/view/link/551bd4d0e4b0faba907dd4ba
-  status:
+  - event: 2
+    script: b2 srcipt
+    next: 3
+  - event: 1
+    script: b1 srcipt
+    next: 2
+  remark: ""
+- code: 3
+  name: "1.2"
+  title: 西医检查
+  path: /record/exam
+  draft: http://www.processon.com/view/link/551bd4d0e4b0faba907dd4ba
+  status: 1
   behavior:
-  - event:
-    script:
-    next:
-- code:
-  name:1.3
-  title:诊断治疗
-  path:/
-  drafturl:http://www.processon.com/view/link/551be49fe4b00de3e858755d
-  status:
+  - event: 2
+    script: b2 srcipt
+    next: 3
+  remark: "asasda"
+- code: 4
+  name: "1.3"
+  title: 诊断治疗
+  path: /record/create
+  draft: http://www.processon.com/view/link/551be49fe4b00de3e858755d
+  status: 1
   behavior:
-  - event:
-    script:
-    next:
-- code:
-  name:1.6
-  title:新增患者
-  path:/
-  drafturl:http://www.processon.com/view/link/551b4d74e4b063b1633632a8
-  status:
+  - event: 2
+    script: 1.3 srcipt
+    next: 1
+  remark: "asasda"
+- code: 5
+  name: "1.6"
+  title: 新增患者
+  path: /patient/new
+  draft: http://www.processon.com/view/link/551b4d74e4b063b1633632a8
+  status: 1
   behavior:
-  - event:
-    script:
-    next:
-- code:
-  name:1.7
-  title:导入患者
-  path:/
-  drafturl:http://www.processon.com/view/link/551b8cade4b0b402bf41cd65
-  status:
+  - event: 1
+    script: 1.6 script
+    next: 1
+  remark: "asasda"
+- code: 6
+  name: "1.7"
+  title: 导入患者
+  path: /patient/import
+  draft: http://www.processon.com/view/link/551b8cade4b0b402bf41cd65
+  status: 1
   behavior:
-  - event:
-    script:
-    next:
-- code:
-  name:1.9
-  title:医案查询
-  path:/
-  drafturl:http://www.processon.com/view/link/551b9014e4b03f4b8f079a18
-  status:
+  - event: 1
+    script: 1.7
+    next: 1
+  remark: "asasda"
+- code: 7
+  name: "1.9"
+  title: 医案查询
+  path: /record/search
+  draft: http://www.processon.com/view/link/551b9014e4b03f4b8f079a18
+  status: 1
   behavior:
-  - event:
-    script:
-    next:
+  - event: 1
+    script: 1.9 search
+    next: 1
+  remark: "asasda"
