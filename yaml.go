@@ -13,20 +13,40 @@ type Index struct {
 	MaxRecordID  int
 }
 
+var index Index
+var parray [1000]Patient
+var rarray [10000]Case
+
 func yamlinit() {
 	indexbyte, _ := ioutil.ReadFile("data\\index.yaml")
-	var index Index
 	yaml.Unmarshal(indexbyte, &index)
 	log.Print(index)
 
 	d, _ := yaml.Marshal(&index)
 	log.Printf("--- index:\n%s\n\n", string(d))
 
+	var p Patient
+	var r Case
+	var filename string
+	var pbyte, rbyte []byte
+	for pid := 0; pid <= index.MaxPatientID; pid++ {
+		filename = fmt.Sprintf("data\\patient\\%d.yaml", pid)
+		pbyte, _ = ioutil.ReadFile(filename)
+		yaml.Unmarshal(pbyte, &p)
+
+		parray[pid] = p
+	}
+
+	for rid := 0; rid <= index.MaxRecordID; rid++ {
+		filename = fmt.Sprintf("data\\record\\%d.yaml", rid)
+		rbyte, _ = ioutil.ReadFile(filename)
+		yaml.Unmarshal(rbyte, &r)
+
+		rarray[rid] = r
+	}
 }
 
-func yamltestdate() {
-	var index Index
-
+func yamltestdata() {
 	testp := Patient{0, "test patient", "male", "19750322", "test address", "英文缩写：PMH 英文：Past Medical History", "英文缩写：FMH 英文：Family Medical History", "英文：Allergies"}
 	var d []byte
 	var filename string
@@ -58,7 +78,6 @@ func yamltestdate() {
 
 func yamlcleardata() {
 	indexbyte, _ := ioutil.ReadFile("data\\index.yaml")
-	var index Index
 	yaml.Unmarshal(indexbyte, &index)
 
 	var filename string
@@ -76,5 +95,4 @@ func yamlcleardata() {
 
 	d, _ := yaml.Marshal(&index)
 	ioutil.WriteFile("data\\index.yaml", d, 0644)
-
 }

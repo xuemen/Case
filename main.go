@@ -80,8 +80,11 @@ func serveFile(pattern string, filename string) {
 }
 
 func main() {
+	yamltestdata()
 	yamlinit()
-	yamltestdate()
+	log.Print(index)
+	log.Print(parray[9])
+	log.Print(rarray[9])
 	yamlcleardata()
 	return
 	openbrowser("http://127.0.0.1:2273")
