@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"log"
 	"os"
 )
 
@@ -20,10 +19,10 @@ var rslice []Case
 func yamlinit() {
 	indexbyte, _ := ioutil.ReadFile("data\\index.yaml")
 	yaml.Unmarshal(indexbyte, &index)
-	log.Print(index)
+	//log.Print(index)
 
-	d, _ := yaml.Marshal(&index)
-	log.Printf("--- index:\n%s\n\n", string(d))
+	//d, _ := yaml.Marshal(&index)
+	//log.Printf("--- index:\n%s\n\n", string(d))
 
 	var p Patient
 	var r Case
@@ -54,7 +53,7 @@ func yamltestdata() {
 	for pid := 0; pid < 10; pid++ {
 		testp.PatientID = pid
 		d, _ = yaml.Marshal(&testp)
-		log.Printf("--- testp:\n%s\n\n", string(d))
+		//log.Printf("--- testp:\n%s\n\n", string(d))
 
 		filename = fmt.Sprintf("data\\patient\\%d.yaml", pid)
 		ioutil.WriteFile(filename, d, 0644)
@@ -65,7 +64,7 @@ func yamltestdata() {
 	for rid := 0; rid < 20; rid++ {
 		testr.RecordID = rid
 		d, _ = yaml.Marshal(&testr)
-		log.Printf("--- testr:\n%s\n\n", string(d))
+		//log.Printf("--- testr:\n%s\n\n", string(d))
 
 		filename = fmt.Sprintf("data\\record\\%d.yaml", rid)
 		ioutil.WriteFile(filename, d, 0644)

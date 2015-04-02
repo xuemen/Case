@@ -79,25 +79,50 @@ func serveFile(pattern string, filename string) {
 	})
 }
 
+func pagefsm(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm() //解析参数，默认是不会解析的
+	fmt.Println("method", r.Method)
+	fmt.Println("path", r.URL.Path)
+
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
+
+}
+
 func main() {
-	//pagetestdata()
-	pageinit()
+
+	pagetestdata()
 	return
+
+	yamlcleardata()
 	yamltestdata()
 	yamlinit()
 
+	pageinit()
+	log.Print(Page)
+
+	for k, v := range Page.Page {
+		log.Printf("k=%v,v=%v", k, v)
+		http.HandleFunc(v.Path, pagefsm)
+	}
+
 	openbrowser("http://127.0.0.1:2273")
 
-	//设置访问的路由
-	// web pages
-	http.HandleFunc("/", welcome)
+	/*
+		//设置访问的路由
+		// web pages
+		http.HandleFunc("/", welcome)
 
-	http.HandleFunc("/patient/search", PatientSearsh)
-	http.HandleFunc("/patient/new", PatientNew)
-	http.HandleFunc("/patient/update", PatientUpdate)
-	http.HandleFunc("/case/new", CaseNew)
-	http.HandleFunc("/case/list", CaseList)
-	http.HandleFunc("/case/detail", CaseDetail)
+		http.HandleFunc("/patient/search", PatientSearsh)
+		http.HandleFunc("/patient/new", PatientNew)
+		http.HandleFunc("/patient/update", PatientUpdate)
+		http.HandleFunc("/case/new", CaseNew)
+		http.HandleFunc("/case/list", CaseList)
+		http.HandleFunc("/case/detail", CaseDetail)
+
+	*/
 
 	// ajax
 	http.HandleFunc("/patient/info", PatientInfo)
