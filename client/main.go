@@ -93,19 +93,16 @@ func pagefsm(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	pagetestdata()
-	return
-
 	yamlcleardata()
-	yamltestdata()
+	//	yamltestdata()
 	yamlinit()
 
 	pageinit()
-	log.Print(Page)
+	log.Print(pmap)
 
-	for k, v := range Page.Page {
+	for k, v := range pmap {
 		log.Printf("k=%v,v=%v", k, v)
-		http.HandleFunc(v.Path, pagefsm)
+		http.HandleFunc(k, pagefsm)
 	}
 
 	openbrowser("http://127.0.0.1:2273")
