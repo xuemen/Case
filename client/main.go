@@ -37,6 +37,17 @@ type CaseBrief struct {
 	CreateTime  string
 }
 
+func register(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm() //解析参数，默认是不会解析的
+	fmt.Println("method", r.Method)
+	fmt.Println("path", r.URL.Path)
+
+	for k, v := range r.Form {
+		fmt.Println("key:", k)
+		fmt.Println("val:", strings.Join(v, ""))
+	}
+}
+
 func welcome(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() //解析参数，默认是不会解析的
 	fmt.Println("method", r.Method)
@@ -88,12 +99,19 @@ func pagefsm(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("key:", k)
 		fmt.Println("val:", strings.Join(v, ""))
 	}
-
 }
 
 func main() {
+	//configdata()
+	configinit()
+	ret := ReadJSKey()
+	if ret {
+		openbrowser("http://127.0.0.1:2273")
+	} else {
+		openbrowser("http://127.0.0.1:2273/register")
+	}
 
-	yamlcleardata()
+	//  yamlcleardata()
 	//	yamltestdata()
 	yamlinit()
 
@@ -102,10 +120,12 @@ func main() {
 
 	for k, v := range pmap {
 		log.Printf("k=%v,v=%v", k, v)
-		http.HandleFunc(k, pagefsm)
+		if v.Handle == "pagefsm" {
+			http.HandleFunc(k, pagefsm)
+		}
 	}
-
-	openbrowser("http://127.0.0.1:2273")
+	http.HandleFunc("/", welcome)
+	http.HandleFunc("/register", register)
 
 	/*
 		//设置访问的路由

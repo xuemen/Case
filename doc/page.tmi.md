@@ -59,3 +59,24 @@
 
 ###分配规则
 * 对需求提议者、审议者的具体奖励由需求分析者在《版本方案》中规定。
+
+###技术方案
+####客户端
+1. 在 /static/page/ 路径下设置同名同构的子文件夹。
+2. 每个路径下保存page.yaml文件，记录页面和行为需求。
+3. pageinit读取：
+	* 本地 /static/page/  ：写入一个map[string]page
+	* 服务端 /static/page/ ：写入另一个map[string]page
+	* 服务端 /static/version/ ：写入一个map[string]version
+4. 在各页脚显示：
+	* 所有的version
+	* 本路径下的两种page
+
+####服务器
+1. 在 /static/page/ 路径下设置同名同构的子文件夹。
+2. 每个路径下保存:
+	* index.yaml：保存现有的需求索引。
+	* user.page.yaml：保存各用户提交的页面和行为需求。
+3. 在 /static/version/ 路径下保存《版本方案》
+
+

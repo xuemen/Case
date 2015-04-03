@@ -10,6 +10,7 @@
 |   ├── css
 |   ├── image
 |   ├── js
+|   ├── page
 |   └── template
 ├── data  
 |   ├── patient

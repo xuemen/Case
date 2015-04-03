@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"log"
 	"os"
 )
 
@@ -94,4 +95,31 @@ func yamlcleardata() {
 
 	d, _ := yaml.Marshal(&index)
 	ioutil.WriteFile("data\\index.yaml", d, 0644)
+}
+
+type config struct {
+	RealName      string
+	UserName      string
+	Email         string
+	CellPhone     string
+	Password      string
+	KeyPassphrase string
+	Org           string
+	Statement     string
+}
+
+var conf config
+
+func configinit() {
+	confbyte, _ := ioutil.ReadFile("config.yaml")
+	yaml.Unmarshal(confbyte, &conf)
+
+	log.Printf("config.yaml read... username:%s", conf.UserName)
+}
+
+func configdata() {
+	testconf := config{"黄勇刚", "huangyg", "huangyg@xuemen.com", "13910911670", "12344", "", "北京学门科技有限公司", "..."}
+
+	d, _ := yaml.Marshal(&testconf)
+	ioutil.WriteFile("config.yaml", d, 0644)
 }
