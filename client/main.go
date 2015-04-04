@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os/exec"
@@ -50,6 +51,14 @@ func register(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("static/template/register.gtpl")
 		t.Execute(w, nil)
+	} else if r.Method == "POST" {
+		if len(r.Form["pub"][0]) > 0 {
+			ioutil.WriteFile("key.pub", []byte(r.Form["pub"][0]), 0644)
+		}
+		if len(r.Form["sec"][0]) > 0 {
+			ioutil.WriteFile("key.sec", []byte(r.Form["sec"][0]), 0644)
+		}
+
 	}
 }
 
