@@ -46,6 +46,11 @@ func register(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("key:", k)
 		fmt.Println("val:", strings.Join(v, ""))
 	}
+
+	if r.Method == "GET" {
+		t, _ := template.ParseFiles("static/template/register.gtpl")
+		t.Execute(w, nil)
+	}
 }
 
 func welcome(w http.ResponseWriter, r *http.Request) {
@@ -85,6 +90,7 @@ func welcome(w http.ResponseWriter, r *http.Request) {
 }
 
 func serveFile(pattern string, filename string) {
+	log.Printf("pattern:%s\tfilename:%s", pattern, filename)
 	http.HandleFunc(pattern, func(w http.ResponseWriter, req *http.Request) {
 		http.ServeFile(w, req, filename)
 	})
