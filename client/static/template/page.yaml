@@ -19,8 +19,8 @@
   title: 导入患者
   path: /patient/import
   draft: http://www.processon.com/view/link/551b8cade4b0b402bf41cd65
-  handle: welcome
-  template: welcome.gtpl
+  handle: pagefsm
+  template: patientimport.gtpl
   status: 1
   behavior:
   - event: 1
@@ -32,8 +32,8 @@
   title: 新增患者
   path: /patient/new
   draft: http://www.processon.com/view/link/551b4d74e4b063b1633632a8
-  handle: welcome
-  template: welcome.gtpl
+  handle: PatientNew
+  template: patientnew.gtpl
   status: 1
   behavior:
   - event: 1

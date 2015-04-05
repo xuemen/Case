@@ -47,7 +47,7 @@ func yamlinit() {
 }
 
 func yamltestdata() {
-	testp := Patient{0, "test patient", "male", "19750322", "test address", "英文缩写：PMH 英文：Past Medical History", "英文缩写：FMH 英文：Family Medical History", "英文：Allergies"}
+	testp := Patient{0, "test patient", 0, "男", "19750322", 54, "未婚", "软件工程师", "中华人民共和国", "汉族", "广西梧州", "13910911670", "北京市海淀区车公庄西路35号院北工大留创院121室", "100044", "201504010101000", "英文缩写：PMH 英文：Past Medical History", "英文缩写：FMH 英文：Family Medical History", "英文：Allergies"}
 	var d []byte
 	var filename string
 

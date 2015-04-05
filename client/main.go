@@ -140,6 +140,7 @@ func main() {
 	}
 	http.HandleFunc("/", welcome)
 	http.HandleFunc("/register", register)
+	http.HandleFunc("/patient/new", PatientNew)
 
 	/*
 		//设置访问的路由

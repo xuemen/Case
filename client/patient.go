@@ -3,9 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -14,21 +17,33 @@ type PID struct {
 }
 
 type Patient struct {
-	PatientID int
-	Name      string
-	Sex       string
-	BOD       string
-	Address   string
-	PMH       string
-	FMH       string
-	Allergies string
+	PatientID   int
+	Name        string
+	SCBC        int
+	Sex         string
+	DOB         string
+	Weight      float64 //kg
+	Marital     string
+	Career      string
+	Nationality string
+	Race        string
+	POB         string
+	Phone       string
+	Address     string
+	Postcode    string
+	ServiceTime string
+	PMH         string
+	FMH         string
+	Allergies   string
 }
+
+//testp := Patient{0, "test patient","0", "male", "19750322",54,"单身","软件工程师","中华人民共和国","汉族","广西梧州","13910911670", "北京市海淀区车公庄西路35号院北工大留创院121室", "100044","201504010101000"}
 
 type PatientSearchResult struct {
 	PatientID  int
 	Name       string
 	Sex        string
-	BOD        string
+	DOB        string
 	Address    string
 	CreateTime string
 	Diag       string
@@ -51,7 +66,7 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == "POST" {
 		where := false
 		wherestr := ""
-		sqlstr := "select Patient.PatientID,Patient.Name,Patient.Sex,Patient.BOD,Patient.Address,ifnull(datetime(CreateTime),'未就诊'),ifnull(Diag,'未填写诊断') from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID limit 100"
+		sqlstr := "select Patient.PatientID,Patient.Name,Patient.Sex,Patient.DOB,Patient.Address,ifnull(datetime(CreateTime),'未就诊'),ifnull(Diag,'未填写诊断') from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID limit 100"
 		if len(r.Form["id"][0]) > 0 {
 			if where {
 				wherestr = fmt.Sprintf("%s and Patient.PatientID=%s", wherestr, r.Form["id"][0])
@@ -84,11 +99,11 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 			log.Print("wherestr:\t", wherestr)
 		}
 
-		if len(r.Form["BOD"][0]) > 0 {
+		if len(r.Form["DOB"][0]) > 0 {
 			if where {
-				wherestr = fmt.Sprintf("%s and Patient.BOD=\"%s\"", wherestr, r.Form["BOD"][0])
+				wherestr = fmt.Sprintf("%s and Patient.DOB=\"%s\"", wherestr, r.Form["DOB"][0])
 			} else {
-				wherestr = fmt.Sprintf("%s Patient.BOD=\"%s\"", wherestr, r.Form["BOD"][0])
+				wherestr = fmt.Sprintf("%s Patient.DOB=\"%s\"", wherestr, r.Form["DOB"][0])
 			}
 
 			where = true
@@ -140,7 +155,7 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 		for rows.Next() {
 			var p PatientSearchResult
 
-			err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.BOD, &p.Address, &p.CreateTime, &p.Diag)
+			err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.DOB, &p.Address, &p.CreateTime, &p.Diag)
 			checkErr(err)
 
 			c = append(c, p)
@@ -175,29 +190,36 @@ func PatientNew(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("static/template/patientnew.gtpl")
 		t.Execute(w, nil)
 	} else if r.Method == "POST" {
-		if (len(r.Form["id"][0]) == 0) || (len(r.Form["name"][0]) == 0) {
-			fmt.Fprint(w, "<script>alert(\"必须填写编号和姓名\");</script>")
-			t, _ := template.ParseFiles("patientnew.gtpl")
-			t.Execute(w, nil)
-		}
-		sqlstr := fmt.Sprintf("insert into patient (patientid,name,sex,bod,address,PMH,FMH,Allergies,FVT) values (\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",datetime(\"now\",\"localtime\"))",
-			r.Form["id"][0],
-			r.Form["name"][0],
-			r.Form["sex"][0],
-			r.Form["BOD"][0],
-			r.Form["Address"][0],
-			r.Form["PMH"][0],
-			r.Form["FMH"][0],
-			r.Form["Allergies"][0])
+		name := r.Form["name"][0]
+		scbc, _ := strconv.Atoi(r.Form["scbc"][0])
+		sex := r.Form["sex"][0]
+		DOB := r.Form["DOB"][0]
+		weight, _ := strconv.ParseFloat(r.Form["weight"][0], 32)
+		marital := r.Form["marital"][0]
+		career := r.Form["career"][0]
+		nationality := r.Form["nationality"][0]
+		race := r.Form["race"][0]
+		POB := r.Form["POB"][0]
+		phone := r.Form["phone"][0]
+		address := r.Form["address"][0]
+		postcode := r.Form["postcode"][0]
+		servicetime := r.Form["servicetime"][0]
+		PMH := r.Form["PMH"][0]
+		FMH := r.Form["FMH"][0]
+		allergies := r.Form["allergies"][0]
 
-		log.Print("sqlstr:\t", sqlstr)
-		db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
-		defer db.Close()
-		result, err := db.Exec(sqlstr)
-		checkErr(err)
-		log.Print("result:\t", result)
+		index.MaxPatientID++
+		d, _ := yaml.Marshal(&index)
+		ioutil.WriteFile("data\\index.yaml", d, 0644)
+		log.Printf("index.yaml update:\n%s\n", d)
 
-		fmt.Fprintf(w, "<script>window.location=\"/case/new?pid=%s\"</script>", r.Form["id"][0])
+		filename := fmt.Sprintf("data\\patient\\%d.yaml", index.MaxPatientID)
+		p := Patient{index.MaxPatientID, name, scbc, sex, DOB, weight, marital, career, nationality, race, POB, phone, address, postcode, servicetime, PMH, FMH, allergies}
+		d, _ = yaml.Marshal(&p)
+		ioutil.WriteFile(filename, d, 0644)
+		log.Printf("patient new...patientid:%d\n%s", index.MaxPatientID, d)
+
+		fmt.Fprintf(w, "<script>window.location=\"/case/new?pid=%d\"</script>", index.MaxPatientID)
 	}
 
 }
@@ -209,7 +231,7 @@ func PatientUpdate(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("ID:", r.Form["id"])
 	fmt.Println("Name:", r.Form["name"])
 	fmt.Println("Sex:", r.Form["sex"])
-	fmt.Println("BOD:", r.Form["BOD"])
+	fmt.Println("DOB:", r.Form["DOB"])
 
 	for k, v := range r.Form {
 		fmt.Println("key:", k)
@@ -237,7 +259,7 @@ func PatientInfo(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		if len(r.Form["pid"]) > 0 {
-			sqlstr := fmt.Sprintf("select PatientID,Name,Sex,ifnull(date(BOD),\"未填写生日\"),ifnull(Address,\"未填写地址\"),ifnull(PMH,\"未填写既往病史\"),ifnull(FMH,\"未填写家族病史\"),ifnull(Allergies,\"未填写过敏史\") from Patient where PatientID = %s", r.Form["pid"][0])
+			sqlstr := fmt.Sprintf("select PatientID,Name,Sex,ifnull(date(DOB),\"未填写生日\"),ifnull(Address,\"未填写地址\"),ifnull(PMH,\"未填写既往病史\"),ifnull(FMH,\"未填写家族病史\"),ifnull(Allergies,\"未填写过敏史\") from Patient where PatientID = %s", r.Form["pid"][0])
 			log.Print("sqlstr:\t", sqlstr)
 
 			db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
@@ -249,7 +271,7 @@ func PatientInfo(w http.ResponseWriter, r *http.Request) {
 			//log.Print(rows)
 			var p Patient
 			for rows.Next() {
-				err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.BOD, &p.Address, &p.PMH, &p.FMH, &p.Allergies)
+				err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.DOB, &p.Address)
 				checkErr(err)
 			}
 			log.Print("p:\t", p)
@@ -274,7 +296,7 @@ func PatientBrief(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		if len(r.Form["pid"]) > 0 {
-			sqlstr := fmt.Sprintf("select PatientID,Name,Sex,ifnull(date(BOD),\"未填写生日\"),ifnull(Address,\"未填写地址\") from Patient where PatientID = %s", r.Form["pid"][0])
+			sqlstr := fmt.Sprintf("select PatientID,Name,Sex,ifnull(date(DOB),\"未填写生日\"),ifnull(Address,\"未填写地址\") from Patient where PatientID = %s", r.Form["pid"][0])
 			log.Print("sqlstr:\t", sqlstr)
 
 			db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
@@ -286,7 +308,7 @@ func PatientBrief(w http.ResponseWriter, r *http.Request) {
 			//log.Print(rows)
 			var p Patient
 			for rows.Next() {
-				err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.BOD, &p.Address)
+				err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.DOB, &p.Address)
 				checkErr(err)
 			}
 			log.Print("p:\t", p)
