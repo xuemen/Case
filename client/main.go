@@ -1,9 +1,10 @@
 package main
 
 import (
-	"database/sql"
+	//"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"gopkg.in/yaml.v2"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -59,6 +60,20 @@ func register(w http.ResponseWriter, r *http.Request) {
 			ioutil.WriteFile("key.sec", []byte(r.Form["sec"][0]), 0644)
 		}
 
+		realname := r.Form["realname"][0]
+		username := r.Form["username"][0]
+		email := r.Form["email"][0]
+		cellphone := r.Form["cellphone"][0]
+		password := r.Form["password"][0]
+		org := r.Form["org"][0]
+		statement := r.Form["statement"][0]
+
+		conf = config{realname, username, email, cellphone, password, "", org, statement}
+		d, _ := yaml.Marshal(&conf)
+		ioutil.WriteFile("config.yaml", d, 0644)
+		log.Printf("config file created: \n%s", d)
+
+		fmt.Fprint(w, "<script>window.location=\"/\"</script>")
 	}
 }
 
@@ -72,27 +87,11 @@ func welcome(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("val:", strings.Join(v, ""))
 	}
 
-	db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
-	rows, err := db.Query("select RecordID,Patient.Name,datetime(CreateTime) from Record inner join Patient on Record.PatientID=Patient.PatientID limit 10")
-	checkErr(err)
+	//var cbarray [10]CaseBrief
+	//c := cbarray[0:0]
 
-	var cbarray [10]CaseBrief
-	c := cbarray[0:0]
-
-	for rows.Next() {
-		var cb CaseBrief
-
-		err = rows.Scan(&cb.CaseID, &cb.PatientName, &cb.CreateTime)
-		checkErr(err)
-
-		c = append(c, cb)
-		/*
-			for _, b := range []byte(cb.PatientName) {
-				fmt.Printf("%x\n", b)
-			}*/
-	}
-
-	//log.Print(c)
+	c := readCaseBrief(10)
+	log.Print(c)
 
 	t, _ := template.ParseFiles("static/template/welcome.gtpl")
 	t.Execute(w, c)
@@ -127,7 +126,7 @@ func main() {
 	}
 
 	//  yamlcleardata()
-	//	yamltestdata()
+	yamltestdata()
 	yamlinit()
 
 	pageinit()

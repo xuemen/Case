@@ -5,6 +5,7 @@ import (
 	//"golang.org/x/crypto/openpgp/armor"
 	"os"
 	//"time"
+	"log"
 )
 
 var pubkey, seckey *openpgp.Entity
@@ -30,11 +31,13 @@ func ReadJSKey() bool {
 	defer pubringFile.Close()
 	pubring, _ := openpgp.ReadArmoredKeyRing(pubringFile)
 	pubkey = getKeyByEmail(pubring, conf.Email)
+	log.Printf("Public Key:\n%v", pubkey)
 
 	secringFile, _ := os.Open("key.sec")
 	defer secringFile.Close()
 	secring, _ := openpgp.ReadArmoredKeyRing(secringFile)
 	seckey = getKeyByEmail(secring, conf.Email)
+	log.Printf("Security Key:\n%v", seckey)
 
 	return true
 }

@@ -15,7 +15,7 @@ type Index struct {
 
 var index Index
 var pslice []Patient
-var rslice []Case
+var rslice []CaseDetailData
 
 func yamlinit() {
 	indexbyte, _ := ioutil.ReadFile("data\\index.yaml")
@@ -26,7 +26,7 @@ func yamlinit() {
 	//log.Printf("--- index:\n%s\n\n", string(d))
 
 	var p Patient
-	var r Case
+	var r CaseDetailData
 	var filename string
 	var pbyte, rbyte []byte
 	for pid := 0; pid <= index.MaxPatientID; pid++ {
@@ -61,9 +61,10 @@ func yamltestdata() {
 	}
 	index.MaxPatientID = 9
 
-	testr := Case{0, "英文：Main Complaint", "ExamReport", "Diag", "DRR", "英文：Presciption", "20150401"}
+	testr := CaseDetailData{0, 0, "英文：Main Complaint", "ExamReport", "Diag", "DRR", "英文：Presciption", "", "20150401", "true"}
 	for rid := 0; rid < 20; rid++ {
 		testr.RecordID = rid
+		testr.PatientID = rid / 2
 		d, _ = yaml.Marshal(&testr)
 		//log.Printf("--- testr:\n%s\n\n", string(d))
 
@@ -122,4 +123,19 @@ func configdata() {
 
 	d, _ := yaml.Marshal(&testconf)
 	ioutil.WriteFile("config.yaml", d, 0644)
+}
+
+func readCaseBrief(n int) []CaseBrief {
+	var ret []CaseBrief
+
+	MinRid := 0
+	if index.MaxRecordID > n {
+		MinRid = index.MaxRecordID - n
+	}
+	for rid := index.MaxRecordID; rid >= MinRid; rid-- {
+		r := CaseBrief{rslice[rid].RecordID, pslice[rslice[rid].PatientID].Name, rslice[rid].CreateTime}
+		ret = append(ret, r)
+	}
+
+	return ret
 }

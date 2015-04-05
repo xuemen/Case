@@ -22,11 +22,13 @@
 				var passphrase = document.getElementById("keypassphrase").value;;
 				var opt = {numBits: 2048, userId: userid, passphrase: passphrase};
 				
+				alert("准备创建密钥对，可能需要几十秒。");
 				openpgp.generateKeyPair(opt).then(function(key) {
 					document.getElementById("pub").value = key.publicKeyArmored ;
 					document.getElementById("sec").value = key.publicKeyArmored ;
 					});
 				
+				//document.getElementById("reg").submit();  
 				document.getElementById("register").disabled=false;
 			 }
 		</script>
@@ -38,7 +40,7 @@
 			<hr>
 		</div>
 
-		<form class="pure-form pure-form-aligned" action="/register" method="post"  style="padding: 0px 20px">
+		<form class="pure-form pure-form-aligned" id="reg" action="/register" method="post"  style="padding: 0px 20px">
 			<div class="pure-g">
 				<div class="pure-u-1" align="center">		
 					<fieldset>
