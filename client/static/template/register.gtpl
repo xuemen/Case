@@ -3,9 +3,9 @@
 	<head>
 		<meta charset="UTF-8"> 
 		<title>用户注册</title>	
-		<link rel="stylesheet" type="text/css" href="static/css/sidebar.css" />
-		<link rel="stylesheet" type="text/css" href="static/css/pure-min.css" />
-		<script type="text/javascript" src="static/js/openpgp.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/static/css/sidebar.css" />
+		<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
+		<script type="text/javascript" src="/static/js/openpgp.min.js"></script>
 		<script type="text/javascript">
 			function createkey()
 			 {
@@ -92,7 +92,7 @@
 
 		<div class="nav">
 			<div class="home">
-			  <span><img src="favicon.ico"></img></span>
+			  <span><img src="/favicon.ico"></img></span>
 			</div>
 			<div class="sidebar">
 				<ul>

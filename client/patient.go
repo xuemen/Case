@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type PID struct {
@@ -64,109 +65,70 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("static/template/patientsearch.gtpl")
 		t.Execute(w, nil)
 	} else if r.Method == "POST" {
-		where := false
-		wherestr := ""
-		sqlstr := "select Patient.PatientID,Patient.Name,Patient.Sex,Patient.DOB,Patient.Address,ifnull(datetime(CreateTime),'未就诊'),ifnull(Diag,'未填写诊断') from Patient left join Record on Patient.PatientID = Record.PatientID %s group by Patient.PatientID limit 100"
-		if len(r.Form["id"][0]) > 0 {
-			if where {
-				wherestr = fmt.Sprintf("%s and Patient.PatientID=%s", wherestr, r.Form["id"][0])
-			} else {
-				wherestr = fmt.Sprintf("%s Patient.PatientID=%s", wherestr, r.Form["id"][0])
-			}
-			where = true
-			log.Print("wherestr:\t", wherestr)
-		}
-
-		if len(r.Form["name"][0]) > 0 {
-			if where {
-				wherestr = fmt.Sprintf("%s and Patient.Name=\"%s\"", wherestr, r.Form["name"][0])
-			} else {
-				wherestr = fmt.Sprintf("%s Patient.Name=\"%s\"", wherestr, r.Form["name"][0])
-			}
-
-			where = true
-			log.Print("wherestr:\t", wherestr)
-		}
-
-		if r.Form["sex"][0] != "All" {
-			if where {
-				wherestr = fmt.Sprintf("%s and Patient.Sex=\"%s\"", wherestr, r.Form["sex"][0])
-			} else {
-				wherestr = fmt.Sprintf("%s Patient.Sex=\"%s\"", wherestr, r.Form["sex"][0])
-			}
-
-			where = true
-			log.Print("wherestr:\t", wherestr)
-		}
-
-		if len(r.Form["DOB"][0]) > 0 {
-			if where {
-				wherestr = fmt.Sprintf("%s and Patient.DOB=\"%s\"", wherestr, r.Form["DOB"][0])
-			} else {
-				wherestr = fmt.Sprintf("%s Patient.DOB=\"%s\"", wherestr, r.Form["DOB"][0])
-			}
-
-			where = true
-			log.Print("wherestr:\t", wherestr)
-		}
-
-		if r.Form["time"][0] == "24h" {
-			if where {
-				wherestr = fmt.Sprintf("%s and (strftime('%%s','now') - strftime('%%s',createtime))<86400", wherestr)
-			} else {
-				wherestr = fmt.Sprintf("%s (strftime('%%s','now') - strftime('%%s',createtime))<86400", wherestr)
-			}
-
-			where = true
-			log.Print("wherestr:\t", wherestr)
-		}
-
-		if r.Form["time"][0] == "7d" {
-			if where {
-				wherestr = fmt.Sprintf("%s and (strftime('%%s','now') - strftime('%%s',createtime))<604800", wherestr)
-			} else {
-				wherestr = fmt.Sprintf("%s (strftime('%%s','now') - strftime('%%s',createtime))<604800", wherestr)
-			}
-
-			where = true
-			log.Print("wherestr:\t", wherestr)
-		}
-
-		if where {
-			wherestr = fmt.Sprintf("where %s", wherestr)
-		}
-
-		log.Print("sqlstr:\t", sqlstr)
-		sqlstr = fmt.Sprintf(sqlstr, wherestr)
-		log.Print("sqlstr:\t", sqlstr)
-
-		db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
-		defer db.Close()
-		rows, err := db.Query(sqlstr)
-		checkErr(err)
-
-		log.Print(rows)
-
-		var parray [100]PatientSearchResult
-		c := parray[0:0]
-
+		var ret []PatientSearchResult
 		HasResult := false
+		for pid, v := range pslice {
+			var psr PatientSearchResult
+			log.Printf("pid=%d\tv.PatientID=%d", pid, v.PatientID)
+			if (len(r.Form["id"][0]) > 0) && (string(v.PatientID) != r.Form["id"][0]) {
+				log.Printf("r.Form[\"id\"][0]=%s", r.Form["id"][0])
+				continue
+			}
 
-		for rows.Next() {
-			var p PatientSearchResult
+			if (len(r.Form["name"][0]) > 0) && (v.Name != r.Form["name"][0]) {
+				log.Printf("r.Form[\"name\"][0]=%s", r.Form["name"][0])
+				continue
+			}
 
-			err = rows.Scan(&p.PatientID, &p.Name, &p.Sex, &p.DOB, &p.Address, &p.CreateTime, &p.Diag)
-			checkErr(err)
+			if (r.Form["sex"][0] != "All") && (v.Sex != r.Form["sex"][0]) {
+				log.Printf("r.Form[\"sex\"][0]=%s", r.Form["sex"][0])
+				continue
+			}
+			if (len(r.Form["DOB"][0]) > 0) && (v.DOB != r.Form["DOB"][0]) {
+				log.Printf("r.Form[\"DOB\"][0]=%s", r.Form["DOB"][0])
+				continue
+			}
 
-			c = append(c, p)
+			rtime, _ := time.Parse("1900-01-01 10:30:00", "1900-01-01 10:30:00")
+			for rid := index.MaxRecordID; rid >= 0; rid-- {
+				if rslice[rid].PatientID == v.PatientID {
+					rtime, _ = time.Parse("2015-01-01 10:30:00", rslice[rid].CreateTime)
+					psr.CreateTime = rslice[rid].CreateTime
+					psr.Diag = rslice[rid].Diag
+					break
+				}
+			}
+
+			if r.Form["time"][0] != "All" {
+
+				if (r.Form["time"][0] == "24h") && (time.Since(rtime).Hours() >= 24.0) {
+					continue
+				}
+				if (r.Form["time"][0] == "7d") && (time.Since(rtime).Hours() >= 7*24.0) {
+					continue
+				}
+			}
+
+			for rid := index.MaxRecordID; rid >= 0; rid-- {
+				if rslice[rid].PatientID == v.PatientID {
+					rtime, _ = time.Parse("2015-01-01 10:30:00", rslice[rid].CreateTime)
+					break
+				}
+			}
+
+			psr.Address = v.Address
+			psr.DOB = v.DOB
+			psr.Name = v.Name
+			psr.PatientID = v.PatientID
+			psr.Sex = v.Sex
+
+			ret = append(ret, psr)
 			HasResult = true
-			log.Print("c:\t", c)
-			log.Print("p:\t", p)
 		}
 
 		t, _ := template.ParseFiles("static/template/patientsearch.gtpl")
 		if HasResult {
-			t.Execute(w, c)
+			t.Execute(w, ret)
 		} else {
 			t.Execute(w, nil)
 		}
@@ -215,6 +177,7 @@ func PatientNew(w http.ResponseWriter, r *http.Request) {
 
 		filename := fmt.Sprintf("data\\patient\\%d.yaml", index.MaxPatientID)
 		p := Patient{index.MaxPatientID, name, scbc, sex, DOB, weight, marital, career, nationality, race, POB, phone, address, postcode, servicetime, PMH, FMH, allergies}
+		pslice = append(pslice, p)
 		d, _ = yaml.Marshal(&p)
 		ioutil.WriteFile(filename, d, 0644)
 		log.Printf("patient new...patientid:%d\n%s", index.MaxPatientID, d)

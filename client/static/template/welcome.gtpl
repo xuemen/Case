@@ -3,8 +3,8 @@
 <head>
   	<title>欢迎</title>
   	<meta charset="UTF-8"> 
-  	<link rel="stylesheet" type="text/css" href="static/css/sidebar.css" />
-	<link rel="stylesheet" type="text/css" href="static/css/pure-min.css" />
+  	<link rel="stylesheet" type="text/css" href="/static/css/sidebar.css" />
+	<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
 </head>
 	<body>
 	<!--content begin-->
@@ -18,8 +18,8 @@
 		    <div class="pure-u-1-3"  align="center"> 
 				病人：<br>
 				<p>
-				<a href="patient/search">查找</a>
-				<a href="patient/new">新增</a>
+				<a href="/patient/search">查找</a>
+				<a href="/patient/new">新增</a>
 				</p>
 			</div>
 			
@@ -27,7 +27,7 @@
 				病历：<br>
 				<p>
 				{{range .}}
-				<a href="case/detial?CaseID={{.CaseID}}">{{.PatientName}} : [{{.CreateTime}}]</a> <br>
+				<a href="/case/detial?CaseID={{.CaseID}}">{{.PatientName}} : [{{.CreateTime}}]</a> <br>
 				{{end}}
 				</p>
 			</div>
@@ -35,7 +35,7 @@
 	<!--content end-->
 		<div class="nav">
 			<div class="home">
-			  <span><img src="favicon.ico"></img></span>
+			  <span><img src="/favicon.ico"></img></span>
 			</div>
 			<div class="sidebar">
 				<ul>

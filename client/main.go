@@ -141,13 +141,13 @@ func main() {
 	http.HandleFunc("/", welcome)
 	http.HandleFunc("/register", register)
 	http.HandleFunc("/patient/new", PatientNew)
-
+	http.HandleFunc("/patient/search", PatientSearsh)
 	/*
 		//设置访问的路由
 		// web pages
 		http.HandleFunc("/", welcome)
 
-		http.HandleFunc("/patient/search", PatientSearsh)
+
 		http.HandleFunc("/patient/new", PatientNew)
 		http.HandleFunc("/patient/update", PatientUpdate)
 		http.HandleFunc("/case/new", CaseNew)
@@ -167,7 +167,7 @@ func main() {
 	})
 	serveFile("/favicon.ico", "./favicon.ico")
 
-	err := http.ListenAndServe(":2273", nil) //设置监听的端口
+	err := http.ListenAndServe(":2273", nil) //设置监听的端口,case
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

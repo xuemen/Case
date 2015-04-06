@@ -24,8 +24,8 @@
 							</div>
 							
 							<div class="pure-u-1-3">
-								<label for="BOD">生日</label>
-							<input type="text" name="BOD" placeholder="（格式：yyyy-mm-dd）">
+								<label for="DOB">生日</label>
+							<input type="text" name="DOB" placeholder="（格式：yyyy-mm-dd）">
 							</div>
 							
 							<div class="pure-u-1-3">
@@ -67,7 +67,7 @@
 					<tbody>
 					{{range .}}
 						<tr>
-							<td>{{.PatientID}}</td><td>{{.Name}}</td><td>{{.Sex}}</td><td>{{.BOD}}</td><td>{{.Address}}</td><td>{{.CreateTime}}</td><td>{{.Diag}}</td><td><a href="/case/list?pid={{.PatientID}}">查看</a> | <a href="/case/new?pid={{.PatientID}}">新建</a></td>
+							<td>{{.PatientID}}</td><td>{{.Name}}</td><td>{{.Sex}}</td><td>{{.DOB}}</td><td>{{.Address}}</td><td>{{.CreateTime}}</td><td>{{.Diag}}</td><td><a href="/case/list?pid={{.PatientID}}">查看</a> | <a href="/case/new?pid={{.PatientID}}">新建</a></td>
 						</tr>
 					{{end}}
 					</tbody>
