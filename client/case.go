@@ -53,6 +53,83 @@ type CaseDetailData struct {
 	ReadOnly      string
 }
 
+type FourDiag struct {
+	CaseID int
+	StrA1  string //问诊-主诉
+	StrA2  string //问诊-现病史
+	StrA3  string //问诊-既往史
+	StrA4  string //问诊-过敏史
+	StrA5  string //问诊-婚育史
+	StrA6  string //问诊-个人史
+	StrA7  string //问诊-家族史
+
+	StrB1 string //望诊-舌诊
+	StrB2 string //望诊-神色形态
+	StrB3 string //望诊-舌诊图片
+	StrB4 string //望诊-胸腹
+	StrB5 string //望诊-腰背四肢爪甲
+	StrB6 string //望诊-皮肤毛发
+	StrB7 string //望诊-头面五官颈项
+	StrB8 string //望诊-前后二阴及排泄物
+
+	StrC1 string //闻切诊-闻诊
+	StrC2 string //闻切诊-脉诊
+	StrC3 string //闻切诊-其它
+
+	StrD1 string //摘要-症状
+	StrD2 string //摘要-舌诊
+	StrD3 string //摘要-脉诊
+}
+
+type Exam struct {
+	CaseID int
+	StrA1  string //体格检查
+	StrB1  string //实验室检查-血常规
+	StrB2  string //实验室检查-心电图
+	StrB3  string //实验室检查-尿常规
+	StrB4  string //实验室检查-CT
+	StrB5  string //实验室检查-大便常规
+	StrB6  string //实验室检查-MRI
+	StrB7  string //实验室检查-血生化
+	StrB8  string //实验室检查-超声
+	StrB9  string //实验室检查-X光片
+	StrB10 string //实验室检查-其它
+}
+
+type DiagAndTreatment struct {
+	CaseID int
+
+	StrA1 string //诊断与治法-中医疾病
+	StrA2 string //诊断与治法-西医疾病
+	StrA3 string //诊断与治法-中医证候
+	StrA4 string //诊断与治法-治则执法
+
+	Barray []Recpt //中医处方
+
+	StrC1 string //穴位处方
+
+	StrD1 string //其它治疗-中成药
+	StrD2 string //其它治疗-西成药
+	StrD3 string //其它治疗-其它
+
+}
+
+type Recpt struct {
+	RecptID   int
+	Name      string
+	RType     string
+	Amount    int
+	CreatorID int
+	Detail    []Drug
+}
+
+type Drug struct {
+	Name       string
+	Amount     float64
+	Role       string
+	Processing string
+}
+
 func CaseNew(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() //解析参数，默认是不会解析的
 	fmt.Println("method", r.Method)
