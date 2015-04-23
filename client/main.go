@@ -126,7 +126,7 @@ func main() {
 	}
 
 	//  yamlcleardata()
-	yamltestdata()
+	//yamltestdata()
 	yamlinit()
 
 	pageinit()
@@ -143,6 +143,8 @@ func main() {
 	http.HandleFunc("/patient/new", PatientNew)
 	http.HandleFunc("/patient/search", PatientSearsh)
 	http.HandleFunc("/case/new", FourDiagEdit)
+	http.HandleFunc("/case/exam", ExamEdit)
+	http.HandleFunc("/case/dat", DatEdit)
 
 	/*
 		//设置访问的路由

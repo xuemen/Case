@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+	<head>
+		<meta charset="UTF-8"> 
+		<link rel="stylesheet" type="text/css" href="/static/css/sidebar.css" />
+		<link rel="stylesheet" type="text/css" href="/static/css/pure-min.css" />
+		<script type="text/javascript">
+			window.onload = init;
+
+			function init()	{
+				var rid;
+				rid=GetQueryString("rid");
+				
+				document.getElementById("rid").value = rid;
+			}
+			
+			function GetQueryString(name) {
+			   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
+			   var r = window.location.search.substr(1).match(reg);
+			   if (r!=null) return unescape(r[2]); return null;
+			}
+			
+			function esc() {
+				var rid;
+				rid=GetQueryString("rid");
+				
+				url = "/case/dat?rid=" + rid;
+				window.location.href= url;
+			}
+		</script>
+	</head>
+	<body>
+		<!--content begin-->
+		<div class="header"  align="center">
+			<h1>西医检查</h1>
+			<hr>
+			<input type="button" class="pure-button pure-button-primary pure-u-1-2" id="esc" onclick="esc()" value="跳过"></input>
+		</div>
+		
+
+		<form class="pure-form pure-form-aligned" id="reg" action="/case/exam" method="post"  style="padding: 0px 20px">
+			<div class="pure-g">
+				<div class="pure-u-1" align="center">		
+					<fieldset>
+						<div class="header"  align="center">
+							<h3>体格检查</h3>
+						</div>
+						
+						<div class="pure-control-group">
+							<label for="StrA1">体格检查</label>
+							<textarea name="StrA1" class="pure-input-1-2" rows="5" placeholder="体格检查" >{{.StrA1}}</textarea>
+						</div>
+						
+						<div class="header"  align="center">
+							<hr>
+							<h3>实验室检查</h3>
+						</div>
+
+						<div class="pure-control-group">
+							<label for="StrB1">血常规</label>
+							<textarea name="StrB1" class="pure-input-1-2" rows="5" placeholder="血常规" >{{.StrB1}}</textarea>
+						</div>
+						<div class="pure-control-group">
+							<label for="StrB2">心电图</label>
+							<textarea name="StrB2" class="pure-input-1-2" rows="5" placeholder="心电图" >{{.StrB2}}</textarea>
+						</div>
+						<div class="pure-control-group">
+							<label for="StrB3">尿常规</label>
+							<textarea name="StrB3" class="pure-input-1-2" rows="5" placeholder="尿常规" >{{.StrB3}}</textarea>
+						</div>
+						<div class="pure-control-group">
+							<label for="StrB4">CT</label>
+							<textarea name="StrB4" class="pure-input-1-2" rows="5" placeholder="CT" >{{.StrB4}}</textarea>
+						</div>
+						<div class="pure-control-group">
+							<label for="StrB5">大便常规</label>
+							<textarea name="StrB5" class="pure-input-1-2" rows="5" placeholder="大便常规" >{{.StrB5}}</textarea>
+						</div>
+						<div class="pure-control-group">
+							<label for="StrB6">MRI</label>
+							<textarea name="StrB6" class="pure-input-1-2" rows="5" placeholder="MRI" >{{.StrB6}}</textarea>
+						</div>
+						<div class="pure-control-group">
+							<label for="StrB7">血生化</label>
+							<textarea name="StrB7" class="pure-input-1-2" rows="5" placeholder="血生化" >{{.StrB7}}</textarea>
+						</div>
+						<div class="pure-control-group">
+							<label for="StrB8">超声</label>
+							<textarea name="StrB8" class="pure-input-1-2" rows="5" placeholder="超声" >{{.StrB8}}</textarea>
+						</div>
+						<div class="pure-control-group">
+							<label for="StrB9">X光片</label>
+							<textarea name="StrB9" class="pure-input-1-2" rows="5" placeholder="X光片" >{{.StrB9}}</textarea>
+						</div>
+						<div class="pure-control-group">
+							<label for="StrB10">其它</label>
+							<textarea name="StrB10" class="pure-input-1-2" rows="5" placeholder="其它" >{{.StrB10}}</textarea>
+						</div>
+						
+						<input type="hidden" id="rid" name="rid"></input>
+
+						<br>
+						<div class="pure-controls"  align="center">
+						<input type="submit" class="pure-button pure-button-primary pure-input-1-2" id="save" value="保存"></input>
+
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</form>
+		<!--content end-->
+	
+
+		<div class="nav">
+			<div class="home">
+			  <span><img src="/favicon.ico"></img></span>
+			</div>
+			<div class="sidebar">
+				<ul>
+					<li onclick="window.location.href='/welcome'">Home</li>
+					<li class="devider"></li>
+					<li onclick="window.location.href='/patient/search'">查找病人</li>
+					<li onclick="window.location.href='/patient/new'">新增病人</li>
+					<li class="devider"></li>
+					<li onclick="window.location.href='/case/list'">查找病历</li>
+					<li class="devider"></li>
+					<li onclick="window.open('http://www.processon.com/myteams/539577890cf21885c69f20b3#diagrams')">设计图样</li>
+					<li onclick="window.open('http://git.oschina.net/hyg/Case/issues')">质量反馈</li>
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>
