@@ -27,7 +27,7 @@
 				病历：<br>
 				<p>
 				{{range .}}
-				<a href="/case/detial?CaseID={{.CaseID}}">{{.PatientName}} : [{{.CreateTime}}]</a> <br>
+				<a href="/case/detail?rid={{.CaseID}}">{{.PatientName}} : [{{.CreateTime}}]</a> <br>
 				{{end}}
 				</p>
 			</div>

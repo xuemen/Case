@@ -145,6 +145,9 @@ func main() {
 	http.HandleFunc("/case/new", FourDiagEdit)
 	http.HandleFunc("/case/exam", ExamEdit)
 	http.HandleFunc("/case/dat", DatEdit)
+	http.HandleFunc("/case/list", CaseList)
+	http.HandleFunc("/case/detail", CaseDetail)
+	http.HandleFunc("/recpt/detail", RecptDetail)
 
 	/*
 		//设置访问的路由

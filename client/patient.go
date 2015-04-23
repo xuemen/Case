@@ -70,9 +70,12 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 		for pid, v := range pslice {
 			var psr PatientSearchResult
 			log.Printf("pid=%d\tv.PatientID=%d", pid, v.PatientID)
-			if (len(r.Form["id"][0]) > 0) && (string(v.PatientID) != r.Form["id"][0]) {
-				log.Printf("r.Form[\"id\"][0]=%s", r.Form["id"][0])
-				continue
+			if len(r.Form["id"][0]) > 0 {
+				pid, _ := strconv.Atoi(r.Form["id"][0])
+				if pid != v.PatientID {
+					log.Printf("r.Form[\"id\"][0]=%s", r.Form["id"][0])
+					continue
+				}
 			}
 
 			if (len(r.Form["name"][0]) > 0) && (v.Name != r.Form["name"][0]) {
@@ -91,10 +94,10 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 
 			rtime, _ := time.Parse("2006-01-02 15:04:05", "1900-01-01 10:30:00")
 			for rid := index.MaxRecordID; rid >= 0; rid-- {
-				if rslice[rid].PatientID == v.PatientID {
-					rtime, _ = time.Parse("2006-01-02 15:04:05", rslice[rid].CreateTime)
-					psr.CreateTime = rslice[rid].CreateTime
-					psr.Diag = rslice[rid].FourDiagInfo.StrA1
+				if rcslice[rid].PatientID == v.PatientID {
+					rtime, _ = time.Parse("2006-01-02 15:04:05", rcslice[rid].CreateTime)
+					psr.CreateTime = rcslice[rid].CreateTime
+					psr.Diag = rcslice[rid].FourDiagInfo.StrA1
 					break
 				}
 			}
@@ -110,8 +113,8 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 			}
 
 			for rid := index.MaxRecordID; rid >= 0; rid-- {
-				if rslice[rid].PatientID == v.PatientID {
-					rtime, _ = time.Parse("2015-01-01 10:30:00", rslice[rid].CreateTime)
+				if rcslice[rid].PatientID == v.PatientID {
+					rtime, _ = time.Parse("2015-01-01 10:30:00", rcslice[rid].CreateTime)
 					break
 				}
 			}

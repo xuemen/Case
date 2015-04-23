@@ -8,10 +8,10 @@
 			window.onload = init;
 
 			function init()	{
-				var rid;
-				rid=GetQueryString("rid");
+				var rtid;
+				rtid=GetQueryString("rtid");
 				
-				document.getElementById("rid").value = rid;
+				document.getElementById("rtid").value = rtid;
 			}
 			
 			function GetQueryString(name) {
@@ -24,7 +24,7 @@
 	<body>
 		<!--content begin-->
 		<div class="header"  align="center">
-			<h1>诊断治疗</h1>
+			<h1>处方详情</h1>
 			<hr>
 		</div>
 
@@ -33,42 +33,37 @@
 				<div class="pure-u-1" align="center">		
 					<fieldset>
 						<div class="header"  align="center">
-							<h3>诊断与治法</h3>
+							<h3>处方概述</h3>
 						</div>
 						
 						<div class="pure-control-group">
-							<label for="StrA1">中医疾病</label>
-							<textarea name="StrA1" class="pure-input-1-2" rows="5" placeholder="中医疾病" >{{.StrA1}}</textarea>
+							<label for="Name">处方名称：</label>{{.Name}}
 						</div>
 						<div class="pure-control-group">
-							<label for="StrA2">西医疾病</label>
-							<textarea name="StrA2" class="pure-input-1-2" rows="5" placeholder="西医疾病" >{{.StrA2}}</textarea>
+							<label for="RType">处方类型：</label>{{.RType}}
 						</div>
 						<div class="pure-control-group">
-							<label for="StrA3">中医证候</label>
-							<textarea name="StrA3" class="pure-input-1-2" rows="5" placeholder="中医证候" >{{.StrA3}}</textarea>
+							<label for="Amount">剂数：</label>{{.Amount}}
 						</div>
 						<div class="pure-control-group">
-							<label for="StrA4">治则执法</label>
-							<textarea name="StrA4" class="pure-input-1-2" rows="5" placeholder="治则执法" >{{.StrA4}}</textarea>
+							<label for="CreatorID">医师编号：</label>{{.CreatorID}}
 						</div>
 						
 						<div class="header"  align="center">
 							<hr>
-							<h3>中医处方</h3>
+							<h3>处方预览</h3>
 						</div>
 						<div class="pure-u-1">
 							<table class="pure-table pure-table-bordered" align="center" width="100%">
-								<caption>处方列表</caption>
 								<thead>
 									<tr>
-										<th>编号</th><th>名称</th><th>剂数</th><th>操作</th>
+										<th>药名</th><th>用量</th><th>作用</th><th>用法</th>
 									</tr>
 								</thead>
 								<tbody>
-								{{range .RtArray}}
+								{{range .Detail}}
 									<tr>
-										<td>{{.RecptID}}</td><td>{{.Name}}</td><td>{{.Amount}}</td><td><a href="/recpt/detail?rtid={{.RecptID}}">详情</a></td>
+										<td>{{.Name}}</td><td>{{.Amount}}</td><td>{{.Role}}</td><td>{{.Processing}}</a></td>
 									</tr>
 								{{end}}
 								</tbody>
@@ -76,40 +71,8 @@
 						</div>
 
 						
-						<div class="header"  align="center">
-							<hr>
-							<h3>穴位处方</h3>
-						</div>
+						<input type="hidden" id="rtid" name="rtid"></input>
 
-						<div class="pure-control-group">
-							<label for="StrC1">穴位</label>
-							<textarea name="StrC1" class="pure-input-1-2" rows="5" placeholder="穴位" >{{.StrC1}}</textarea>
-						</div>
-						
-						<div class="header"  align="center">
-							<hr>
-							<h3>其它治疗</h3>
-						</div>
-						
-						<div class="pure-control-group">
-							<label for="StrD1">中成药</label>
-							<textarea name="StrD1" class="pure-input-1-2" rows="5" placeholder="中成药" >{{.StrD1}}</textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="StrD2">西成药</label>
-							<textarea name="StrD2" class="pure-input-1-2" rows="5" placeholder="西成药" >{{.StrD2}}</textarea>
-						</div>
-						<div class="pure-control-group">
-							<label for="StrD3">其它</label>
-							<textarea name="StrD3" class="pure-input-1-2" rows="5" placeholder="其它" >{{.StrD3}}</textarea>
-						</div>
-						<input type="hidden" id="rid" name="rid"></input>
-
-						<br>
-						<div class="pure-controls"  align="center">
-						<input type="submit" class="pure-button pure-button-primary pure-input-1-2" id="save" value="保存"></input>
-
-						</div>
 					</fieldset>
 				</div>
 			</div>

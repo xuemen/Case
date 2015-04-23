@@ -11,11 +11,13 @@ import (
 type Index struct {
 	MaxPatientID int
 	MaxRecordID  int
+	MaxRecptID   int
 }
 
 var index Index
 var pslice []Patient
-var rslice []Record
+var rcslice []Record
+var rtslice []Recpt
 
 func yamlinit() {
 	indexbyte, _ := ioutil.ReadFile("data\\index.yaml")
@@ -26,9 +28,10 @@ func yamlinit() {
 	//log.Printf("--- index:\n%s\n\n", string(d))
 
 	var p Patient
-	var r Record
+	var rc Record
+	var rt Recpt
 	var filename string
-	var pbyte, rbyte []byte
+	var pbyte, rcbyte, rtbyte []byte
 	for pid := 0; pid <= index.MaxPatientID; pid++ {
 		filename = fmt.Sprintf("data\\patient\\%d.yaml", pid)
 		pbyte, _ = ioutil.ReadFile(filename)
@@ -37,12 +40,20 @@ func yamlinit() {
 		pslice = append(pslice, p)
 	}
 
-	for rid := 0; rid <= index.MaxRecordID; rid++ {
-		filename = fmt.Sprintf("data\\record\\%d.yaml", rid)
-		rbyte, _ = ioutil.ReadFile(filename)
-		yaml.Unmarshal(rbyte, &r)
+	for rcid := 0; rcid <= index.MaxRecordID; rcid++ {
+		filename = fmt.Sprintf("data\\record\\%d.yaml", rcid)
+		rcbyte, _ = ioutil.ReadFile(filename)
+		yaml.Unmarshal(rcbyte, &rc)
 
-		rslice = append(rslice, r)
+		rcslice = append(rcslice, rc)
+	}
+
+	for rtid := 0; rtid <= index.MaxRecptID; rtid++ {
+		filename = fmt.Sprintf("data\\recpt\\%d.yaml", rtid)
+		rtbyte, _ = ioutil.ReadFile(filename)
+		yaml.Unmarshal(rtbyte, &rt)
+
+		rtslice = append(rtslice, rt)
 	}
 }
 
@@ -93,7 +104,12 @@ func saverecord(rid int, rc Record) {
 	filename := fmt.Sprintf("data\\record\\%d.yaml", rid)
 	ioutil.WriteFile(filename, d, 0644)
 
-	rslice = append(rslice, rc)
+	if rid > len(rcslice) {
+		rcslice = append(rcslice, rc)
+	} else {
+		rcslice[rid] = rc
+	}
+
 }
 
 func yamlcleardata() {
@@ -152,7 +168,7 @@ func readCaseBrief(n int) []CaseBrief {
 		MinRid = index.MaxRecordID - n
 	}
 	for rid := index.MaxRecordID; rid >= MinRid; rid-- {
-		r := CaseBrief{rslice[rid].RecordID, pslice[rslice[rid].PatientID].Name, rslice[rid].CreateTime}
+		r := CaseBrief{rcslice[rid].RecordID, pslice[rcslice[rid].PatientID].Name, rcslice[rid].CreateTime}
 		ret = append(ret, r)
 	}
 

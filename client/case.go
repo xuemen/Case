@@ -116,7 +116,7 @@ type DiagAndTreatment struct {
 	StrA3 string //诊断与治法-中医证候
 	StrA4 string //诊断与治法-治则执法
 
-	Barray []Recpt //中医处方
+	RtArray []Recpt //中医处方
 
 	StrC1 string //穴位处方
 
@@ -156,7 +156,7 @@ func DatEdit(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("static/template/datedit.html")
 		if len(r.Form["rid"]) > 0 {
 			rid, _ := strconv.Atoi(r.Form["rid"][0])
-			rc := rslice[rid]
+			rc := rcslice[rid]
 			log.Print(rc)
 			t.Execute(w, rc.DiagAndTreatmentInfo)
 		}
@@ -173,13 +173,14 @@ func DatEdit(w http.ResponseWriter, r *http.Request) {
 				dat.StrA3 = r.Form["StrA3"][0]
 				dat.StrA4 = r.Form["StrA4"][0]
 
+				dat.RtArray = []Recpt{rtslice[1], rtslice[1], rtslice[1]}
 				dat.StrC1 = r.Form["StrC1"][0]
 
 				dat.StrD1 = r.Form["StrD1"][0]
 				dat.StrD2 = r.Form["StrD2"][0]
 				dat.StrD3 = r.Form["StrD3"][0]
 			}
-			rc = rslice[rid]
+			rc = rcslice[rid]
 			dat.RecordID = rid
 			rc.DiagAndTreatmentInfo = dat
 			saverecord(rid, rc)
@@ -202,7 +203,7 @@ func ExamEdit(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("static/template/examedit.html")
 		if len(r.Form["rid"]) > 0 {
 			rid, _ := strconv.Atoi(r.Form["rid"][0])
-			rc := rslice[rid]
+			rc := rcslice[rid]
 			log.Print(rc)
 			t.Execute(w, rc.ExamInfo)
 		}
@@ -227,7 +228,7 @@ func ExamEdit(w http.ResponseWriter, r *http.Request) {
 				ex.StrB9 = r.Form["StrB9"][0]
 				ex.StrB10 = r.Form["StrB10"][0]
 			}
-			rc = rslice[rid]
+			rc = rcslice[rid]
 			ex.RecordID = rid
 			rc.ExamInfo = ex
 			saverecord(rid, rc)
@@ -253,7 +254,7 @@ func FourDiagEdit(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("static/template/fourdiagedit.html")
 		if len(r.Form["rid"]) > 0 {
 			rid, _ := strconv.Atoi(r.Form["rid"][0])
-			rc := rslice[rid]
+			rc := rcslice[rid]
 			log.Print(rc)
 			t.Execute(w, rc.FourDiagInfo)
 		} else if len(r.Form["pid"]) > 0 {
@@ -374,34 +375,22 @@ func CaseList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		var cld CaseListData
-		var sqlstr string
+
+		var rset []Record
 		if len(r.Form["pid"]) > 0 {
-			sqlstr = fmt.Sprintf("Select RecordID,ifnull(MainComplaint,\"未填写主诉\"),ifnull(ExamReport,\"无检验报告\"),ifnull(Diag,\"未填写诊断\"),ifnull(DRR,\"未填写医嘱\"),ifnull(Presciption,\"未填写处方\"),ifnull(datetime(CreateTime),\"未提交\") from Record where PatientID = %s limit 100", r.Form["pid"][0])
+			pid, _ := strconv.Atoi(r.Form["pid"][0])
+			for rid, rc := range rcslice {
+				if rcslice[rid].PatientID == pid {
+					rset = append(rset, rc)
+				}
+			}
+
 		} else {
-			sqlstr = "Select RecordID,ifnull(MainComplaint,\"未填写主诉\"),ifnull(ExamReport,\"无检验报告\"),ifnull(Diag,\"未填写诊断\"),ifnull(DRR,\"未填写医嘱\"),ifnull(Presciption,\"未填写处方\"),ifnull(datetime(CreateTime),\"未提交\") from Record limit 100"
+			rset = rcslice
 		}
-		log.Print("sqlstr:\t", sqlstr)
 
-		db, err := sql.Open("sqlite3", "./case.v0.1.s3db")
-		defer db.Close()
-		rows, err := db.Query(sqlstr)
-		checkErr(err)
-
-		//log.Print(rows)
-		var CArray [100]Case
-		cld.Cases = CArray[0:0]
-		for rows.Next() {
-			var c Case
-
-			err = rows.Scan(&c.RecordID, &c.MainComplaint, &c.ExamReport, &c.Diag, &c.DRR, &c.Presciption, &c.CreateTime)
-			checkErr(err)
-
-			cld.Cases = append(cld.Cases, c)
-		}
 		t, _ := template.ParseFiles("static/template/caselist.gtpl")
-		err = t.Execute(w, cld)
-		log.Print("err:\t", err)
+		t.Execute(w, rset)
 	} else if r.Method == "POST" {
 
 	}
@@ -420,13 +409,11 @@ func CaseDetail(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		if len(r.Form["rid"]) > 0 {
-			t, err := template.ParseFiles("static/template/casedetail.gtpl")
-			r := RID{RecordID: r.Form["rid"][0]}
-			err = t.Execute(w, r)
+			t, err := template.ParseFiles("static/template/recorddetail.html")
+			rcid, _ := strconv.Atoi(r.Form["rid"][0])
+			rc := rcslice[rcid]
+			err = t.Execute(w, rc)
 			log.Print("err:\t", err)
-		} else {
-			t, _ := template.ParseFiles("static/template/casedetail.gtpl")
-			t.Execute(w, nil)
 		}
 	} else if r.Method == "POST" {
 		sqlstr := fmt.Sprintf("update record set patientid=%s,MainComplaint=\"%s\",ExamReport=\"%s\",Diag=\"%s\",DRR=\"%s\",Presciption=\"%s\",Notes=\"%s\",SubmitTime=datetime(\"now\",\"localtime\"),IsTemplate=0,Status=%d where RecordID=%s",
