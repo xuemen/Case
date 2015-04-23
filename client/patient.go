@@ -89,12 +89,12 @@ func PatientSearsh(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			rtime, _ := time.Parse("1900-01-01 10:30:00", "1900-01-01 10:30:00")
+			rtime, _ := time.Parse("2006-01-02 15:04:05", "1900-01-01 10:30:00")
 			for rid := index.MaxRecordID; rid >= 0; rid-- {
 				if rslice[rid].PatientID == v.PatientID {
-					rtime, _ = time.Parse("2015-01-01 10:30:00", rslice[rid].CreateTime)
+					rtime, _ = time.Parse("2006-01-02 15:04:05", rslice[rid].CreateTime)
 					psr.CreateTime = rslice[rid].CreateTime
-					psr.Diag = rslice[rid].Diag
+					psr.Diag = rslice[rid].FourDiagInfo.StrA1
 					break
 				}
 			}

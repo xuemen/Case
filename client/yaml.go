@@ -15,7 +15,7 @@ type Index struct {
 
 var index Index
 var pslice []Patient
-var rslice []CaseDetailData
+var rslice []Record
 
 func yamlinit() {
 	indexbyte, _ := ioutil.ReadFile("data\\index.yaml")
@@ -26,7 +26,7 @@ func yamlinit() {
 	//log.Printf("--- index:\n%s\n\n", string(d))
 
 	var p Patient
-	var r CaseDetailData
+	var r Record
 	var filename string
 	var pbyte, rbyte []byte
 	for pid := 0; pid <= index.MaxPatientID; pid++ {
@@ -75,6 +75,25 @@ func yamltestdata() {
 
 	d, _ = yaml.Marshal(&index)
 	ioutil.WriteFile("data\\index.yaml", d, 0644)
+}
+
+func getnewrid() int {
+	index.MaxRecordID = index.MaxRecordID + 1
+	rid := index.MaxRecordID
+
+	d, _ := yaml.Marshal(&index)
+	ioutil.WriteFile("data\\index.yaml", d, 0644)
+
+	return rid
+}
+
+func saverecord(rid int, rc Record) {
+	d, _ := yaml.Marshal(&rc)
+
+	filename := fmt.Sprintf("data\\record\\%d.yaml", rid)
+	ioutil.WriteFile(filename, d, 0644)
+
+	rslice = append(rslice, rc)
 }
 
 func yamlcleardata() {

@@ -142,6 +142,8 @@ func main() {
 	http.HandleFunc("/register", register)
 	http.HandleFunc("/patient/new", PatientNew)
 	http.HandleFunc("/patient/search", PatientSearsh)
+	http.HandleFunc("/case/new", FourDiagEdit)
+
 	/*
 		//设置访问的路由
 		// web pages
