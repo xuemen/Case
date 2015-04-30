@@ -99,11 +99,14 @@ func getnewrid() int {
 }
 
 func saverecord(rid int, rc Record) {
+	log.Printf("saverecord:\nrid=%d\ndata=%v", rid, rc)
+
 	d, _ := yaml.Marshal(&rc)
 
 	filename := fmt.Sprintf("data\\record\\%d.yaml", rid)
 	ioutil.WriteFile(filename, d, 0644)
 
+	log.Printf("len(rcslice)=%d", len(rcslice))
 	if rid > len(rcslice) {
 		rcslice = append(rcslice, rc)
 	} else {

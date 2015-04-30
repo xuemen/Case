@@ -12,6 +12,11 @@
 				pid=GetQueryString("pid");
 				
 				document.getElementById("pid").value = pid;
+				
+				var rid;
+				rid=GetQueryString("rid");
+				
+				document.getElementById("rid").value = rid;
 			}
 			
 			function GetQueryString(name) {
@@ -140,6 +145,7 @@
 							<textarea name="StrD3" class="pure-input-1-2" rows="5" placeholder="脉诊" >{{.StrD3}}</textarea>
 						</div>
 						<input type="hidden" id="pid" name="pid"></input>
+						<input type="hidden" id="rid" name="rid"></input>
 
 						<br>
 						<div class="pure-controls"  align="center">
