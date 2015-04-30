@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/mozillazg/go-pinyin"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
+	"strings"
 )
 
 type Index struct {
@@ -176,4 +179,44 @@ func readCaseBrief(n int) []CaseBrief {
 	}
 
 	return ret
+}
+
+var chinc map[string]string // [医院编码]疾病名称
+var chinj map[string]string // [病名缩写]医院编码
+
+func chineseillnameiit() {
+	chinc = make(map[string]string)
+	chinj = make(map[string]string)
+
+	chincbyte, _ := ioutil.ReadFile("data\\init\\chinc.yaml")
+	yaml.Unmarshal(chincbyte, &chinc)
+	//log.Print(chinc)
+
+	a := pinyin.NewArgs()
+	a.Style = pinyin.FirstLetter
+
+	reg := regexp.MustCompile(`[（][^（）]+[）]`)
+
+	for c, name := range chinc {
+		name = reg.ReplaceAllString(name, "")
+		name = strings.Replace(name, " ", "", -1)
+		name = strings.Replace(name, "*", "", -1)
+		name = strings.Replace(name, "、", "", -1)
+		name = strings.Replace(name, "》", "", -1)
+		name = strings.Replace(name, "?", "", -1)
+
+		p := pinyin.LazyPinyin(name, a)
+		j := strings.Join(p, "")
+		_, ok := chinj[j]
+		if ok {
+			//同音病名处理
+		}
+		chinc[c] = name
+		chinj[j] = c
+		//log.Printf("%s\t%s\t%s", c, j, name)
+	}
+	d, _ := yaml.Marshal(&chinc)
+	ioutil.WriteFile("data\\init\\chinc.yaml", d, 0644)
+	d, _ = yaml.Marshal(&chinj)
+	ioutil.WriteFile("data\\init\\chinj.yaml", d, 0644)
 }

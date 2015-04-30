@@ -116,6 +116,9 @@ func pagefsm(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	chineseillnameiit()
+	return
 	//configdata()
 	configinit()
 	ret := ReadJSKey()
