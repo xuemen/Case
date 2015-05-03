@@ -117,7 +117,7 @@ func pagefsm(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	chineseillnameiit()
+	chinit()
 	return
 	//configdata()
 	configinit()

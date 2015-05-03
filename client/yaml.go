@@ -181,42 +181,45 @@ func readCaseBrief(n int) []CaseBrief {
 	return ret
 }
 
-var chinc map[string]string // [医院编码]疾病名称
-var chinj map[string]string // [病名缩写]医院编码
+var cnc map[string]string   // [疾病名称]医院编码
+var ccn map[string][]string // [医院编码][]疾病名称
+var cnj map[string][]string // [病名缩写][]疾病名称
 
-func chineseillnameiit() {
-	chinc = make(map[string]string)
-	chinj = make(map[string]string)
+func chinit() {
+	raw := make(map[string]string)
+	cnc = make(map[string]string)
+	ccn = make(map[string][]string)
+	cnj = make(map[string][]string)
 
-	chincbyte, _ := ioutil.ReadFile("data\\init\\chinc.yaml")
-	yaml.Unmarshal(chincbyte, &chinc)
-	//log.Print(chinc)
+	chincbyte, _ := ioutil.ReadFile("data\\init\\ch.yaml")
+	yaml.Unmarshal(chincbyte, &raw)
+	//log.Print(cnc)
 
 	a := pinyin.NewArgs()
 	a.Style = pinyin.FirstLetter
 
 	reg := regexp.MustCompile(`[（][^（）]+[）]`)
 
-	for c, name := range chinc {
-		name = reg.ReplaceAllString(name, "")
+	for name, c := range raw {
 		name = strings.Replace(name, " ", "", -1)
 		name = strings.Replace(name, "*", "", -1)
 		name = strings.Replace(name, "、", "", -1)
 		name = strings.Replace(name, "》", "", -1)
 		name = strings.Replace(name, "?", "", -1)
 
-		p := pinyin.LazyPinyin(name, a)
+		shortname := reg.ReplaceAllString(name, "")
+
+		p := pinyin.LazyPinyin(shortname, a)
 		j := strings.Join(p, "")
-		_, ok := chinj[j]
-		if ok {
-			//同音病名处理
-		}
-		chinc[c] = name
-		chinj[j] = c
-		//log.Printf("%s\t%s\t%s", c, j, name)
+
+		ccn[c] = append(ccn[c], name)
+		cnj[j] = append(cnj[j], name)
+		cnc[name] = c
 	}
-	d, _ := yaml.Marshal(&chinc)
-	ioutil.WriteFile("data\\init\\chinc.yaml", d, 0644)
-	d, _ = yaml.Marshal(&chinj)
-	ioutil.WriteFile("data\\init\\chinj.yaml", d, 0644)
+	d, _ := yaml.Marshal(&cnc)
+	ioutil.WriteFile("data\\init\\cnc.yaml", d, 0644)
+	d, _ = yaml.Marshal(&ccn)
+	ioutil.WriteFile("data\\init\\ccn.yaml", d, 0644)
+	d, _ = yaml.Marshal(&cnj)
+	ioutil.WriteFile("data\\init\\cnj.yaml", d, 0644)
 }
